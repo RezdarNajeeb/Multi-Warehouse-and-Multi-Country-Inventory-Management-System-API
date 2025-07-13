@@ -3,52 +3,43 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Facades\JWTAuth;
+use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\AuthService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    use ApiResponse;
+
+    public function __construct(protected AuthService $authService)
     {
-        $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|unique:users',
-            'password' => 'required|string|min:8', // Increased minimum length
-        ]);
-
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-        ]);
-
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json(['user' => $user, 'token' => $token]);
+        //
     }
 
-    public function login(Request $request)
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $credentials = $request->only('email', 'password');
+        $result = $this->authService->register($request->validated());
 
-        if (!$token = JWTAuth::attempt($credentials)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+        return $this->success("User registered successfully", $result, 201);
+    }
+
+    public function logout(): JsonResponse
+    {
+        $this->authService->logout();
+
+        return $this->success('Successfully logged out');
+    }
+
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $token = $this->authService->login($request->validated());
+
+        if (!$token) {
+            return $this->error('Invalid credentials', 401);
         }
 
-        return response()->json(['token' => $token]);
-    }
-
-    public function me()
-    {
-        return response()->json(JWTAuth::user());
-    }
-
-    public function logout()
-    {
-        Auth::logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        return $this->success('Login successful', ['token' => $token]);
     }
 }
