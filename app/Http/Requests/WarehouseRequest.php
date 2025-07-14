@@ -18,7 +18,7 @@ class WarehouseRequest extends FormRequest
         return [
             'name' => $requiredOrSometimes . '|string|max:255',
             'location' => $requiredOrSometimes . '|string|max:120',
-            'country_id' => $requiredOrSometimes . '|integer|exists:countries,id',
+            'country_id' => 'required|integer|exists:countries,id',
         ];
     }
 }

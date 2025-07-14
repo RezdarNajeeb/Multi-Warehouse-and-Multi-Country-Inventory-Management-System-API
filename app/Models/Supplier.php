@@ -26,6 +26,6 @@ class Supplier extends Model
     // relations
     public function inventoryTransactions(): HasMany
     {
-        return $this->hasMany(InventoryTransactions::class);
+        return $this->hasMany(InventoryTransaction::class);
     }
 }
