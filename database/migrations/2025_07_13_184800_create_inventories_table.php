@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->foreignIdFor(Product::class)->constrained('products')->restrictOnDelete();
             $table->foreignIdFor(Warehouse::class)->constrained('warehouses')->restrictOnDelete();
             $table->unsignedInteger('quantity'); // we can adjust the type if needed
-            $table->unsignedInteger('min_quantity')->default(0);
+            $table->unsignedInteger('min_quantity');
             $table->timestamps();
 
             $table->unique(['product_id', 'warehouse_id']); // only one inventory record per product in a warehouse

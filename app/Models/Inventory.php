@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Inventory extends Model
 {
@@ -27,4 +28,12 @@ class Inventory extends Model
     {
         return $this->belongsTo(Warehouse::class);
     }
+
+    public function transactions(): HasMany
+    {
+        // only transactions for this inventory in the warehouse
+        return $this->hasMany(InventoryTransaction::class, 'product_id', 'product_id')
+            ->where('warehouse_id', $this->warehouse_id);
+    }
+
 }
