@@ -19,6 +19,7 @@ return new class extends Migration {
             $table->enum('transaction_type', ['in', 'out']);
             $table->timestamp('date'); // the date of the transaction
             $table->foreignId('created_by')->constrained('users')->restrictOnDelete();
+            $table->text('notes')->nullable(); // can be useful for reversing transactions or adding context
             $table->timestamps();
         });
     }
