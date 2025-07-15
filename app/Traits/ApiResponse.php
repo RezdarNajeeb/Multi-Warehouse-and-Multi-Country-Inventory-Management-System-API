@@ -3,10 +3,15 @@
 namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponse
 {
-    protected function success(string $message = '', ?array $data = [], int $status = 200): JsonResponse
+    public function successResponse(
+        mixed $data = null,
+        string $message = 'Success',
+        int $status = Response::HTTP_OK
+    ): JsonResponse
     {
         return response()->json([
             'status' => true,
@@ -15,12 +20,36 @@ trait ApiResponse
         ], $status);
     }
 
-    protected function error(string $message = '', int $status = 400, $errors = []): JsonResponse
+    public function errorResponse(
+        string $message = 'Something went wrong',
+        int $status = Response::HTTP_INTERNAL_SERVER_ERROR,
+        mixed $errors = null
+    ): JsonResponse
     {
         return response()->json([
             'status' => false,
             'message' => $message,
             'errors' => $errors,
         ], $status);
+    }
+
+    public function createdResponse(mixed $data, string $message = 'Created successfully'): JsonResponse
+    {
+        return $this->successResponse($data, $message, Response::HTTP_CREATED);
+    }
+
+    public function deletedResponse(string $message = 'Deleted successfully'): JsonResponse
+    {
+        return $this->successResponse(null, $message, 204);
+    }
+
+    public function notFoundResponse(string $resource = 'Resource'): JsonResponse
+    {
+        return $this->errorResponse("$resource not found", Response::HTTP_NOT_FOUND);
+    }
+
+    public function validationErrorResponse(mixed $errors): JsonResponse
+    {
+        return $this->errorResponse('Validation error', Response::HTTP_UNPROCESSABLE_ENTITY, $errors);
     }
 }

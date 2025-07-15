@@ -6,35 +6,49 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CountryRequest;
 use App\Http\Resources\CountryResource;
 use App\Models\Country;
+use App\Services\CountryService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 
 class CountryController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected CountryService $countryService)
     {
-        return CountryResource::collection(Country::paginate(10));
+        //
     }
 
-    public function store(CountryRequest $request)
+    public function index(): JsonResponse
     {
-        return new CountryResource(Country::create($request->validated()));
+        return $this->successResponse(
+            CountryResource::collection($this->countryService->list())
+        );
     }
 
-    public function show(Country $country)
+    public function store(CountryRequest $request): JsonResponse
     {
-        return new CountryResource($country);
+        return $this->createdResponse(
+            new CountryResource($this->countryService->create($request))
+        );
     }
 
-    public function update(CountryRequest $request, Country $country)
+    public function show(Country $country): JsonResponse
     {
-        $country->update($request->validated());
-
-        return new CountryResource($country);
+        return $this->successResponse(new CountryResource($country));
     }
 
-    public function destroy(Country $country)
+    public function update(CountryRequest $request, Country $country): JsonResponse
     {
-        $country->delete();
+        return $this->successResponse(
+            new CountryResource($this->countryService->update($request, $country)),
+            'Updated successfully'
+        );
+    }
 
-        return response()->json();
+    public function destroy(Country $country): JsonResponse
+    {
+        $this->countryService->delete($country);
+        return $this->deletedResponse();
     }
 }
