@@ -4,50 +4,41 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InventoryTransactionRequest;
+use App\Services\InventoryTransactionService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use App\Http\Resources\InventoryTransactionResource;
-use App\Models\Inventory;
 use App\Models\InventoryTransaction;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
 
 class InventoryTransactionController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected InventoryTransactionService $service)
     {
-        return InventoryTransactionResource::collection(InventoryTransaction::paginate(10));
+        //
     }
 
-    public function store(InventoryTransactionRequest $request)
+    public function index(): JsonResponse
     {
-        $validated = $request->validated();
-
-       return DB::transaction(function () use ($validated) {
-           $inventory = Inventory::where([
-               'product_id' => $validated['product_id'],
-               'warehouse_id' => $validated['warehouse_id'],
-           ])->lockForUpdate()->first(); // we lock the inventory row to prevent race conditions
-
-           if (!$inventory) {
-               return response()->json(['error' => 'Inventory not found'], Response::HTTP_NOT_FOUND);
-           }
-
-           if ($validated['transaction_type'] === 'in') {
-               $inventory->increment('quantity', $validated['quantity']);
-           } else {
-                if ($inventory->quantity - $validated['quantity'] < $inventory->min_quantity) {
-                     return response()->json(['error' => 'Insufficient stock'], Response::HTTP_UNPROCESSABLE_ENTITY);
-                }
-                $inventory->decrement('quantity', $validated['quantity']);
-           }
-
-           $validated['created_by'] = auth()->id();
-
-           return new InventoryTransactionResource(InventoryTransaction::create($validated));
-       });
+        return $this->successResponse(
+            InventoryTransactionResource::collection($this->service->list())
+        );
     }
 
-    public function show(InventoryTransaction $inventoryTransactions)
+    public function store(InventoryTransactionRequest $request): JsonResponse
     {
-        return new InventoryTransactionResource($inventoryTransactions);
+        [$data, $error, $status] = $this->service->record($request);
+
+        if ($error) {
+            return $this->errorResponse($error, $status);
+        }
+
+        return $this->successResponse($data, 'Transaction recorded', $status);
+    }
+
+    public function show(InventoryTransaction $inventoryTransaction): JsonResponse
+    {
+        return $this->successResponse(new InventoryTransactionResource($inventoryTransaction));
     }
 }

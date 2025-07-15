@@ -1,0 +1,51 @@
+<?php
+
+namespace App\Services;
+
+use App\Http\Requests\InventoryTransactionRequest;
+use App\Http\Resources\InventoryTransactionResource;
+use App\Models\Inventory;
+use App\Repositories\InventoryTransactionRepository;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
+
+class InventoryTransactionService
+{
+  public function __construct(protected InventoryTransactionRepository $repository)
+  {
+    //
+  }
+
+  public function list(int $perPage = 10): LengthAwarePaginator
+  {
+    return $this->repository->paginate($perPage);
+  }
+
+  public function record(InventoryTransactionRequest $request)
+  {
+    $validated = $request->validated();
+
+    return DB::transaction(function () use ($validated) {
+      // lock inventory row
+      $inventory = Inventory::where([
+        'product_id' => $validated['product_id'],
+        'warehouse_id' => $validated['warehouse_id'],
+      ])->lockForUpdate()->firstOrFail();
+
+      if ($validated['transaction_type'] === 'in') {
+        $inventory->increment('quantity', $validated['quantity']);
+      } else {
+        if ($inventory->quantity - $validated['quantity'] < $inventory->min_quantity) {
+          return [null, 'Insufficient stock', Response::HTTP_UNPROCESSABLE_ENTITY];
+        }
+        $inventory->decrement('quantity', $validated['quantity']);
+      }
+
+      $validated['created_by'] = auth()->id();
+      $transaction = $this->repository->create($validated);
+
+      return [new InventoryTransactionResource($transaction), null, Response::HTTP_CREATED];
+    });
+  }
+}
