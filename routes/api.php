@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\InventoryTransactionController;
 use App\Http\Controllers\Api\InventoryTransferController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\WarehouseController;
 
@@ -24,5 +25,6 @@ Route::middleware('auth:api')->group(function () {
     ->except(['update', 'delete']);
     Route::post('/inventory-transfer', InventoryTransferController::class);
     Route::get('/inventory/global-view', [InventoryController::class, 'getGlobalView']);
+    Route::get('/reports/low-stock', ReportController::class);
 });
 
