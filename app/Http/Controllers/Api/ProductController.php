@@ -6,35 +6,50 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
+use App\Services\ProductService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class ProductController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected ProductService $productService)
     {
-        return ProductResource::collection(Product::paginate(10));
+        //
     }
 
-    public function store(ProductRequest $request)
+    public function index(): JsonResponse
     {
-        return new ProductResource(Product::create($request->validated()));
+        return $this->successResponse(
+            ProductResource::collection($this->productService->list())
+        );
     }
 
-    public function show(Product $product)
+    public function store(ProductRequest $request): JsonResponse
     {
-        return new ProductResource($product);
+        return $this->createdResponse(
+            new ProductResource($this->productService->create($request))
+        );
     }
 
-    public function update(ProductRequest $request, Product $product)
+    public function show(Product $product): JsonResponse
     {
-        $product->update($request->validated());
-
-        return new ProductResource($product);
+        return $this->successResponse(new ProductResource($product));
     }
 
-    public function destroy(Product $product)
+    public function update(ProductRequest $request, Product $product): JsonResponse
     {
-        $product->delete();
+        return $this->successResponse(
+            new ProductResource($this->productService->update($request, $product)),
+            'Updated successfully'
+        );
+    }
 
-        return response()->json();
+    public function destroy(Product $product): Response
+    {
+        $this->productService->delete($product);
+        return $this->deletedResponse();
     }
 }
