@@ -9,6 +9,7 @@ use App\Models\Country;
 use App\Services\CountryService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class CountryController extends Controller
 {
@@ -46,7 +47,7 @@ class CountryController extends Controller
         );
     }
 
-    public function destroy(Country $country): JsonResponse
+    public function destroy(Country $country): Response
     {
         $this->countryService->delete($country);
         return $this->deletedResponse();
