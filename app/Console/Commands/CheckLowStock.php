@@ -24,8 +24,8 @@ class CheckLowStock extends Command
 
         $rows = new Collection();
 
-        Inventory::whereColumn('quantity', '=', 'min_quantity')
-        ->with(['product.suppliers', 'warehouse.country'])
+        Inventory::whereColumn('quantity', '<=', 'min_quantity')
+            ->with(['product.suppliers', 'warehouse.country'])
             ->chunkById(500, function ($chunk) use (&$rows): void {
                 $rows = $rows->merge($chunk);
             });
@@ -35,7 +35,7 @@ class CheckLowStock extends Command
             return self::SUCCESS;
         }
 
-        Mail::to($recipient)->send(new LowStockReport($rows));
+        Mail::to($recipient)->queue(new LowStockReport($rows));
 
         $this->info("Low‑stock report sent to {$recipient}.");
 

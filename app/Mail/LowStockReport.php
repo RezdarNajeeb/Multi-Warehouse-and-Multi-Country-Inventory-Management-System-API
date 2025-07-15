@@ -4,9 +4,12 @@ namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
 use Illuminate\Support\Collection;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LowStockReport extends Mailable
+class LowStockReport extends Mailable implements ShouldQueue
 {
+    use Queueable;
     public function __construct(public Collection $rows)
     {
         //
