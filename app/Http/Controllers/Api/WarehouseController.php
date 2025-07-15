@@ -6,35 +6,50 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\WarehouseRequest;
 use App\Http\Resources\WarehouseResource;
 use App\Models\Warehouse;
+use App\Services\WarehouseService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class WarehouseController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected WarehouseService $warehouseService)
     {
-        return WarehouseResource::collection(Warehouse::paginate(10));
+        //
     }
 
-    public function store(WarehouseRequest $request)
+    public function index(): JsonResponse
     {
-        return new WarehouseResource(Warehouse::create($request->validated()));
+        return $this->successResponse(
+            WarehouseResource::collection($this->warehouseService->list())
+        );
     }
 
-    public function show(Warehouse $warehouse)
+    public function store(WarehouseRequest $request): JsonResponse
     {
-        return new WarehouseResource($warehouse);
+        return $this->createdResponse(
+            new WarehouseResource($this->warehouseService->create($request))
+        );
     }
 
-    public function update(WarehouseRequest $request, Warehouse $warehouse)
+    public function show(Warehouse $warehouse): JsonResponse
     {
-        $warehouse->update($request->validated());
-
-        return new WarehouseResource($warehouse);
+        return $this->successResponse(new WarehouseResource($warehouse));
     }
 
-    public function destroy(Warehouse $warehouse)
+    public function update(WarehouseRequest $request, Warehouse $warehouse): JsonResponse
     {
-        $warehouse->delete();
+        return $this->successResponse(
+            new WarehouseResource($this->warehouseService->update($request, $warehouse)),
+            'Updated successfully'
+        );
+    }
 
-        return response()->json();
+    public function destroy(Warehouse $warehouse): Response
+    {
+        $this->warehouseService->delete($warehouse);
+        return $this->deletedResponse();
     }
 }
