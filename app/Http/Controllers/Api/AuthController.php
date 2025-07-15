@@ -22,14 +22,14 @@ class AuthController extends Controller
     {
         $result = $this->authService->register($request->validated());
 
-        return $this->success("User registered successfully", $result, 201);
+        return $this->createdResponse($result, "User registered successfully");
     }
 
     public function logout(): JsonResponse
     {
         $this->authService->logout();
 
-        return $this->success('Successfully logged out');
+        return $this->successResponse(null, "Successfully logged out");
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -37,9 +37,9 @@ class AuthController extends Controller
         $token = $this->authService->login($request->validated());
 
         if (!$token) {
-            return $this->error('Invalid credentials', 401);
+            return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->success('Login successful', ['token' => $token]);
+        return $this->successResponse(['token' => $token], "Login successful");
     }
 }
