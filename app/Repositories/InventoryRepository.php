@@ -30,6 +30,14 @@ class InventoryRepository
     $inventory->delete();
   }
 
+  public function lockForUpdate(int $productId, int $warehouseId): Inventory
+  {
+    return Inventory::where('product_id', $productId)
+      ->where('warehouse_id', $warehouseId)
+      ->lockForUpdate()
+      ->firstOrFail();
+  }
+
   public function getGlobalView(?int $countryId = null, ?int $warehouseId = null): Collection
   {
     $products = Product::query()
