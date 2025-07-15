@@ -6,35 +6,50 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SupplierRequest;
 use App\Http\Resources\SupplierResource;
 use App\Models\Supplier;
+use App\Services\SupplierService;
+use App\Traits\ApiResponse;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 class SupplierController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected SupplierService $supplierService)
     {
-        return SupplierResource::collection(Supplier::paginate(10));
+        //
     }
 
-    public function store(SupplierRequest $request)
+    public function index(): JsonResponse
     {
-        return new SupplierResource(Supplier::create($request->validated()));
+        return $this->successResponse(
+            SupplierResource::collection($this->supplierService->list())
+        );
     }
 
-    public function show(Supplier $supplier)
+    public function store(SupplierRequest $request): JsonResponse
     {
-        return new SupplierResource($supplier);
+        return $this->createdResponse(
+            new SupplierResource($this->supplierService->create($request))
+        );
     }
 
-    public function update(SupplierRequest $request, Supplier $supplier)
+    public function show(Supplier $supplier): JsonResponse
     {
-        $supplier->update($request->validated());
-
-        return new SupplierResource($supplier);
+        return $this->successResponse(new SupplierResource($supplier));
     }
 
-    public function destroy(Supplier $supplier)
+    public function update(SupplierRequest $request, Supplier $supplier): JsonResponse
     {
-        $supplier->delete();
+        return $this->successResponse(
+            new SupplierResource($this->supplierService->update($request, $supplier)),
+            'Updated successfully'
+        );
+    }
 
-        return response()->json();
+    public function destroy(Supplier $supplier): Response
+    {
+        $this->supplierService->delete($supplier);
+        return $this->deletedResponse();
     }
 }
