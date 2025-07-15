@@ -6,89 +6,64 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InventoryRequest;
 use App\Http\Resources\InventoryResource;
 use App\Models\Inventory;
-use DB;
+use App\Services\InventoryService;
+use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Response;
 
 class InventoryController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function __construct(protected InventoryService $inventoryService)
     {
-        return InventoryResource::collection(Inventory::paginate(10));
+        //
     }
 
-    public function store(InventoryRequest $request)
+    public function index(): JsonResponse
     {
-        return new InventoryResource(Inventory::create($request->validated()));
+        return $this->successResponse(
+            InventoryResource::collection($this->inventoryService->list())
+        );
     }
 
-    public function show(Inventory $inventory)
+    public function store(InventoryRequest $request): JsonResponse
     {
-        return new InventoryResource($inventory);
+        return $this->createdResponse(
+            new InventoryResource($this->inventoryService->create($request))
+        );
     }
 
-    public function update(InventoryRequest $request, Inventory $inventory)
+    public function show(Inventory $inventory): JsonResponse
     {
-        if ($inventory->transactions()->exists() || ($inventory->quantity > 0)) {
-            $validated = $request->safe()->only(['quantity', 'min_quantity']);
+        return $this->successResponse(new InventoryResource($inventory->load(['product', 'warehouse'])));
+    }
 
-            $inventory->update($validated);
+    public function update(InventoryRequest $request, Inventory $inventory): JsonResponse
+    {
+        [$updated, $message] = $this->inventoryService->update($request, $inventory);
 
-            return response()->json([
-                'message' => 'Only (quantity and min_quantity) was updated. Other fields are locked due to existing transactions or stock.',
-                'updated_fields' => ['min_quantity', 'quantity'],
-                'data' => new InventoryResource($inventory->load(['product', 'warehouse'])),
-            ]);
+        return $this->successResponse(new InventoryResource($updated), $message);
+    }
+
+    public function destroy(Inventory $inventory): Response|JsonResponse
+    {
+        $error = $this->inventoryService->delete($inventory);
+        if ($error) {
+            return $this->validationErrorResponse($error);
         }
 
-        $inventory->update($request->validated());
-
-        return new InventoryResource($inventory->load(['product', 'warehouse']));
-    }
-
-
-    public function destroy(Inventory $inventory)
-    {
-        if (
-            $inventory->transactions()->exists() ||
-            $inventory->quantity > 0
-        ) {
-            return response()->json(
-                ['message' => 'Inventory cannot be deleted (stock or history exists).'],
-                Response::HTTP_UNPROCESSABLE_ENTITY
-            );
-        }
-
-        $inventory->delete();
-
-        return response()->json();
+        return $this->deletedResponse();
     }
 
     public function getGlobalView(Request $request): JsonResponse
     {
-        $query = Inventory::join('products', 'inventories.product_id', '=', 'products.id')
-            ->join('warehouses', 'inventories.warehouse_id', '=', 'warehouses.id')
-            ->select(
-                'products.id as product_id',
-                'products.name',
-                'products.sku',
-                DB::raw('SUM(inventories.quantity) as total_quantity')
-            );
+        $data = $this->inventoryService->getGlobalView(
+            $request->integer('country_id'),
+            $request->integer('warehouse_id')
+        );
 
-        if ($request->filled('country_id')) {
-            $query->where('warehouses.country_id', $request->input('country_id'));
-        }
-
-        if ($request->filled('warehouse_id')) {
-            $query->where('inventories.warehouse_id', $request->input('warehouse_id'));
-        }
-
-        $data = $query
-            ->groupBy('products.id', 'products.name', 'products.sku')
-            ->orderBy('products.name')
-            ->get();
-
-        return response()->json($data);
+        return $this->successResponse($data);
     }
 }
