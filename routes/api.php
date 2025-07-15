@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CountryController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\InventoryTransactionController;
+use App\Http\Controllers\Api\InventoryTransferController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\WarehouseController;
@@ -21,5 +22,6 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('/suppliers', SupplierController::class);
     Route::apiResource('/inventory-transactions', InventoryTransactionController::class)
     ->except(['update', 'delete']);
+    Route::post('/inventory-transfer', InventoryTransferController::class);
 });
 
