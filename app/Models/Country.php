@@ -20,4 +20,10 @@ class Country extends Model
     {
         return $this->hasMany(Warehouse::class);
     }
+
+    // setters
+    public function setCodeAttribute(string $value): void
+    {
+        $this->attributes['code'] = strtoupper($value);
+    }
 }

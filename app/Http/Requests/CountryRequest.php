@@ -20,7 +20,7 @@ class CountryRequest extends FormRequest
 
             'code' => [
                 $isCreate ? 'required' : 'sometimes',
-                'regex:/^([a-zA-Z]{2,3}|\d{3})$/',
+                'regex:/^([A-Z]{2,3}|\d{3})$/',
                 'unique:countries,code' . ($isCreate ? '' : ',' . $this->route('country')->id),
             ],
         ];

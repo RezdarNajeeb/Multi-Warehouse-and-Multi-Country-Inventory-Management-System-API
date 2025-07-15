@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 trait ApiResponse
@@ -38,9 +39,9 @@ trait ApiResponse
         return $this->successResponse($data, $message, Response::HTTP_CREATED);
     }
 
-    public function deletedResponse(string $message = 'Deleted successfully'): JsonResponse
+    public function deletedResponse(): HttpResponse
     {
-        return $this->successResponse(null, $message, 204);
+        return response()->noContent();
     }
 
     public function notFoundResponse(string $resource = 'Resource'): JsonResponse
