@@ -3,30 +3,29 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Inventory;
 use Illuminate\Http\Request;
+use App\Traits\ApiResponse;
+use App\Services\ReportService;
 
 class ReportController extends Controller
 {
+    use ApiResponse;
+
+    public function __construct(protected ReportService $service)
+    {
+        //
+    }
+
     /**
      * Handle the incoming request.
      */
-    public function __invoke(Request $request)
+    public function __invoke(Request $request): \Illuminate\Http\JsonResponse
     {
-        $rows = Inventory::whereColumn('quantity', '=', 'min_quantity')
-            ->with(['product:id,name,sku', 'product.suppliers', 'warehouse:id,location,country_id', 'warehouse.country:id,name'])
-            ->get()
-            ->map(fn ($inv) => [
-                'product_id'          => $inv->product_id,
-                'product_name'        => $inv->product->name,
-                'sku'                 => $inv->product->sku,
-                'quantity'            => $inv->quantity,
-                'min_quantity'        => $inv->min_quantity,
-                'warehouse_location'  => $inv->warehouse->location,
-                'country'             => $inv->warehouse->country->name ?? '—',
-                'suppliers'           => json_decode($inv->product->suppliers->pluck('contact_info')),
-            ]);
+        $rows = $this->service->lowStock(
+            $request->integer('country_id'),
+            $request->integer('warehouse_id')
+        );
 
-        return response()->json($rows);
+        return $this->successResponse($rows);
     }
 }
