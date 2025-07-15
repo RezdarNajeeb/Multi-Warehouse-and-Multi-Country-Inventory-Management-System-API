@@ -4,6 +4,17 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *      schema="CountryRequest",
+ *      title="Country Request",
+ *      description="Country request body data",
+ *      type="object",
+ *      required={"name", "code"},
+ *      @OA\Property(property="name", type="string", minLength=4, maxLength=100, example="United States"),
+ *      @OA\Property(property="code", type="string", description="2/3-letter or 3-digit country code", example="US")
+ * )
+ */
 class CountryRequest extends FormRequest
 {
     public function authorize(): bool
