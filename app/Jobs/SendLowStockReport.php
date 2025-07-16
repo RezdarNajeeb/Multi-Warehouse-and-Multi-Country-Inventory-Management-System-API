@@ -33,6 +33,7 @@ class SendLowStockReport implements ShouldQueue
 
         Notification::routes([
             'mail' => config('inventory.low_stock_report_email'),
+            'slack' => config('services.slack.webhook_url'),
         ])->notify(new LowStockReport($lowStocks));
     }
 }

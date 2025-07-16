@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
+use Illuminate\Notifications\Messages\SlackMessage;
 
 class LowStockReport extends Notification implements ShouldQueue
 {
@@ -27,7 +28,7 @@ class LowStockReport extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'slack'];
     }
 
     /**
@@ -57,6 +58,27 @@ class LowStockReport extends Notification implements ShouldQueue
 
         return $mail;
     }
+
+
+
+    public function toSlack($notifiable): SlackMessage
+    {
+        return (new SlackMessage)
+            ->success()
+            ->from('Inventory Bot')
+            ->content('Daily Low Stock Report')
+            ->attachment(function ($attachment) {
+                foreach ($this->lowStocks as $item) {
+                    $attachment->fields([
+                        'Product'     => "{$item->product->name} ({$item->product->sku})",
+                        'Qty / Min'   => "{$item->quantity} / {$item->min_quantity}",
+                        'Warehouse'   => $item->warehouse->location,
+                        'Country'     => $item->warehouse->country->name,
+                    ]);
+                }
+            });
+    }
+
 
 
     /**

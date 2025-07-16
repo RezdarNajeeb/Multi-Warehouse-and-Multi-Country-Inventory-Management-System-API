@@ -43,13 +43,12 @@ class InventoryTransactionService
         $inventory->decrement('quantity', $validated['quantity']);
       }
 
+      if ($inventory->quantity <= $inventory->min_quantity) {
+        event(new LowStockDetected(collect([$inventory])));
+      }
+
       $validated['created_by'] = auth()->id();
       $transaction = $this->repository->create($validated);
-
-      // dispatch low-stock event if threshold reached
-      if ($inventory->quantity <= $inventory->min_quantity) {
-        LowStockDetected::dispatch($inventory->refresh());
-      }
 
       return [new InventoryTransactionResource($transaction), null, Response::HTTP_CREATED];
     });

@@ -2,16 +2,18 @@
 
 namespace App\Events;
 
-use App\Models\Inventory;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-
+use Illuminate\Support\Collection;
 class LowStockDetected
 {
-  use Dispatchable, SerializesModels;
+    use Dispatchable, SerializesModels;
 
-  public function __construct(public Inventory $inventory)
-  {
-    // Event fires when inventory quantity <= min_quantity
-  }
+    /**
+     * Create a new event instance.
+     */
+    public function __construct(public Collection $lowStocks)
+    {
+        //
+    }
 }
