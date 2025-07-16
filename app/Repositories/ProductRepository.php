@@ -3,13 +3,18 @@
 namespace App\Repositories;
 
 use App\Models\Product;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class ProductRepository
 {
-  public function paginate(int $perPage = 10): LengthAwarePaginator
+  public function paginate(int $perPage = 10): CursorPaginator
   {
-    return Product::paginate($perPage);
+    return Product::orderBy('id')->cursorPaginate($perPage);
+  }
+
+  public function find(int $productId): Product
+  {
+    return Product::findOrFail($productId);
   }
 
   public function create(array $data): Product

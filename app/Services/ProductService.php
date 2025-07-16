@@ -5,7 +5,8 @@ namespace App\Services;
 use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Support\Facades\Cache;
 
 class ProductService
 {
@@ -14,9 +15,16 @@ class ProductService
     //
   }
 
-  public function list(): LengthAwarePaginator
+  public function list(): CursorPaginator
   {
     return $this->repository->paginate();
+  }
+
+  public function find(int $productId): Product
+  {
+    return Cache::rememberForever("products.{$productId}", function () use ($productId) {
+      return $this->repository->find($productId);
+    });
   }
 
   public function create(ProductRequest $request): Product

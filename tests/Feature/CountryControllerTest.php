@@ -35,9 +35,11 @@ class CountryControllerTest extends TestCase
 
     $response->assertStatus(200)
       ->assertJsonStructure([
+        'status',
+        'message',
         'data' => [
           '*' => ['id', 'name', 'code', 'createdAt', 'updatedAt']
-        ]
+        ],
       ])
       ->assertJsonCount(3, 'data');
   }

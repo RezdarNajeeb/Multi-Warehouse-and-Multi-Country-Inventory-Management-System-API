@@ -3,13 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\Warehouse;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class WarehouseRepository
 {
-  public function paginate(int $perPage = 10): LengthAwarePaginator
+  public function paginate(int $perPage = 10): CursorPaginator
   {
-    return Warehouse::with('country')->paginate($perPage);
+    return Warehouse::with('country')->orderBy('id')->cursorPaginate($perPage);
   }
 
   public function create(array $data): Warehouse

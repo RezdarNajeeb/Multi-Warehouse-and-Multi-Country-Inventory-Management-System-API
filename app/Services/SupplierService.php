@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
 use App\Repositories\SupplierRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class SupplierService
 {
@@ -14,7 +14,7 @@ class SupplierService
     //
   }
 
-  public function list(int $perPage = 10): LengthAwarePaginator
+  public function list(int $perPage = 10): CursorPaginator
   {
     return $this->repository->paginate($perPage);
   }

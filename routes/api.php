@@ -22,9 +22,8 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('/inventories', InventoryController::class);
     Route::apiResource('/suppliers', SupplierController::class);
     Route::apiResource('/inventory-transactions', InventoryTransactionController::class)
-    ->except(['update', 'delete']);
+        ->except(['update', 'delete']);
     Route::post('/inventory-transfer', InventoryTransferController::class);
     Route::get('/inventory/global-view', [InventoryController::class, 'getGlobalView']);
     Route::get('/reports/low-stock', ReportController::class);
 });
-

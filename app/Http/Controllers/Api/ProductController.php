@@ -34,9 +34,9 @@ class ProductController extends Controller
         );
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(int $product): JsonResponse
     {
-        return $this->successResponse(new ProductResource($product));
+        return $this->successResponse(new ProductResource($this->productService->find($product)));
     }
 
     public function update(ProductRequest $request, Product $product): JsonResponse

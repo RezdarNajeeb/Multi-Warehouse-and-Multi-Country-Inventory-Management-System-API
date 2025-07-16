@@ -6,7 +6,7 @@ use App\Http\Requests\InventoryTransactionRequest;
 use App\Http\Resources\InventoryTransactionResource;
 use App\Models\Inventory;
 use App\Repositories\InventoryTransactionRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -17,7 +17,7 @@ class InventoryTransactionService
     //
   }
 
-  public function list(int $perPage = 10): LengthAwarePaginator
+  public function list(int $perPage = 10): CursorPaginator
   {
     return $this->repository->paginate($perPage);
   }

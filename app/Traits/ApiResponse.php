@@ -12,8 +12,7 @@ trait ApiResponse
         mixed $data = null,
         string $message = 'Success',
         int $status = Response::HTTP_OK
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return response()->json([
             'status' => true,
             'message' => $message,
@@ -25,8 +24,7 @@ trait ApiResponse
         string $message = 'Something went wrong',
         int $status = Response::HTTP_INTERNAL_SERVER_ERROR,
         mixed $errors = null
-    ): JsonResponse
-    {
+    ): JsonResponse {
         return response()->json([
             'status' => false,
             'message' => $message,

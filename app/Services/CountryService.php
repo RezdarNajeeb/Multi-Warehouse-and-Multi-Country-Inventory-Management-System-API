@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\CountryRequest;
 use App\Models\Country;
 use App\Repositories\CountryRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class CountryService
 {
@@ -14,7 +14,7 @@ class CountryService
         //
     }
 
-    public function list(): LengthAwarePaginator
+    public function list(): CursorPaginator
     {
         return $this->repository->paginate();
     }

@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\WarehouseRequest;
 use App\Models\Warehouse;
 use App\Repositories\WarehouseRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class WarehouseService
 {
@@ -14,7 +14,7 @@ class WarehouseService
     //
   }
 
-  public function list(): LengthAwarePaginator
+  public function list(): CursorPaginator
   {
     return $this->repository->paginate();
   }

@@ -3,13 +3,13 @@
 namespace App\Repositories;
 
 use App\Models\Country;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class CountryRepository
 {
-    public function paginate(int $perPage = 10): LengthAwarePaginator
+    public function paginate(int $perPage = 10): CursorPaginator
     {
-        return Country::paginate($perPage);
+        return Country::orderBy('id')->cursorPaginate($perPage);
     }
 
     public function create(array $data): Country

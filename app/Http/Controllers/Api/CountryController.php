@@ -45,7 +45,7 @@ class CountryController extends Controller
      *      )
      * )
      */
-    public function index(): JsonResponse
+    public function index()
     {
         return $this->successResponse(
             CountryResource::collection($this->countryService->list())

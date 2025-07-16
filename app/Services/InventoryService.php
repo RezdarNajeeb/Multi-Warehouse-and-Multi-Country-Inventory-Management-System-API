@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Http\Requests\InventoryRequest;
 use App\Models\Inventory;
 use App\Repositories\InventoryRepository;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Collection;
 
 class InventoryService
@@ -15,7 +15,7 @@ class InventoryService
     //
   }
 
-  public function list(): LengthAwarePaginator
+  public function list(): CursorPaginator
   {
     return $this->repository->paginate();
   }

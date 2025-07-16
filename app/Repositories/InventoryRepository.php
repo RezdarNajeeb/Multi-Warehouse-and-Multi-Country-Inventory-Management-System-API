@@ -4,14 +4,14 @@ namespace App\Repositories;
 
 use App\Models\Inventory;
 use App\Models\Product;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Collection;
 
 class InventoryRepository
 {
-  public function paginate(int $perPage = 10): LengthAwarePaginator
+  public function paginate(int $perPage = 10): CursorPaginator
   {
-    return Inventory::with(['product', 'warehouse'])->paginate($perPage);
+    return Inventory::with(['product', 'warehouse'])->orderBy('id')->cursorPaginate($perPage);
   }
 
   public function create(array $data): Inventory

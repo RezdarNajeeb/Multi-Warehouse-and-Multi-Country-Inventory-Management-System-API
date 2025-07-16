@@ -3,16 +3,16 @@
 namespace App\Repositories;
 
 use App\Models\Supplier;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class SupplierRepository
 {
   /**
    * Paginate suppliers list.
    */
-  public function paginate(int $perPage = 10): LengthAwarePaginator
+  public function paginate(int $perPage = 10): CursorPaginator
   {
-    return Supplier::paginate($perPage);
+    return Supplier::orderBy('id')->cursorPaginate($perPage);
   }
 
   /**
