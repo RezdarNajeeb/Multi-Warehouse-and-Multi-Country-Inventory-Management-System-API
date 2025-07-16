@@ -105,4 +105,8 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug((string) env('APP_NAME', 'laravel')).'-cache-'),
 
+
+    // global product cache ttl
+    'ttl' => env('PRODUCT_CACHE_TTL', 300),
+
 ];

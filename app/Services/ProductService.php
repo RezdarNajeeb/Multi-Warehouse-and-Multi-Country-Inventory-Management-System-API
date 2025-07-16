@@ -18,17 +18,19 @@ class ProductService
   public function list(int $perPage = 10): CursorPaginator
   {
     $cursor = request('cursor', 'first');
-    $cacheKey = "products.paginate.{$perPage}.{$cursor}";
+    $cacheKey = "products:paginate:{$perPage}:{$cursor}";
 
     // Cache paginated product lists for 5 minutes to boost read performance
-    return Cache::tags(['products'])->remember($cacheKey, 300, function () use ($perPage) {
+    return Cache::tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($perPage) {
       return $this->repository->paginate($perPage);
     });
   }
 
   public function find(int $productId): Product
   {
-    return Cache::tags(['products'])->rememberForever("products.{$productId}", function () use ($productId) {
+    $cacheKey = "products:single:{$productId}";
+
+    return Cache::tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($productId) {
       return $this->repository->find($productId);
     });
   }
