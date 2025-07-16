@@ -10,6 +10,12 @@ class LowStockReportService
 {
   public function __invoke(): Collection
   {
-    return (new LowStockReportRepository)();
+    $lowStockReport = (new LowStockReportRepository)();
+
+    $lowStockReport->each(function ($lowStock) {
+      $lowStock->product->supplier->contact_info = json_decode($lowStock->product->supplier->contact_info);
+    });
+
+    return $lowStockReport;
   }
 }

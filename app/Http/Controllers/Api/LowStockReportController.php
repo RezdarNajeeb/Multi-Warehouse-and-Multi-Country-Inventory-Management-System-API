@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Traits\ApiResponse;
 use App\Services\LowStockReportService;
 use Illuminate\Http\JsonResponse;
+use App\Http\Resources\LowStockReportResource;
 
 class LowStockReportController extends Controller
 {
@@ -16,6 +17,10 @@ class LowStockReportController extends Controller
      */
     public function __invoke(): JsonResponse
     {
-        return $this->successResponse((new LowStockReportService)());
+        return $this->successResponse(
+            LowStockReportResource::collection(
+                (new LowStockReportService)()
+            )
+        );
     }
 }

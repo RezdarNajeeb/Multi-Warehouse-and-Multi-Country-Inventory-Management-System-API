@@ -41,15 +41,23 @@ class LowStockReport extends Notification implements ShouldQueue
             ->line('The following products are below their minimum stock levels:');
 
         foreach ($this->lowStocks as $lowStock) {
-            $mail->line("• {$lowStock['product_name']} (SKU: {$lowStock['sku']})")
-                ->line("  Qty: {$lowStock['quantity']} / Min: {$lowStock['min_quantity']}")
-                ->line("  Warehouse: {$lowStock['warehouse_location']} ({$lowStock['country']})")
+            $product = $lowStock->product;
+            $supplier = $product?->supplier;
+            $contactInfo = json_decode($supplier?->contact_info ?? '{}', true);
 
+            $email = $contactInfo['email'] ?? 'N/A';
+            $phone = $contactInfo['phone'] ?? 'N/A';
+
+            $mail->line("• {$product->name} (SKU: {$product->sku})")
+                ->line("  Qty: {$lowStock->quantity} / Min: {$lowStock->min_quantity}")
+                ->line("  Warehouse: {$lowStock->warehouse->location} ({$lowStock->warehouse->country->name})")
+                ->line("  Supplier Contact Info: Email: {$email} / Phone: {$phone}")
                 ->line('');
         }
 
         return $mail;
     }
+
 
     /**
      * Get the array representation of the notification.
