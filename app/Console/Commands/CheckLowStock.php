@@ -26,6 +26,5 @@ class CheckLowStock extends Command
     public function handle()
     {
         SendLowStockReport::dispatch();
-        $this->info('Low stock report generated and sent to the ' . config('inventory.low_stock_report_email') . ' email');
     }
 }
