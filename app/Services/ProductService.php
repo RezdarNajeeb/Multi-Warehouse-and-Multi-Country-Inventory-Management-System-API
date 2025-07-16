@@ -15,14 +15,20 @@ class ProductService
     //
   }
 
-  public function list(): CursorPaginator
+  public function list(int $perPage = 10): CursorPaginator
   {
-    return $this->repository->paginate();
+    $cursor = request('cursor', 'first');
+    $cacheKey = "products.paginate.{$perPage}.{$cursor}";
+
+    // Cache paginated product lists for 5 minutes to boost read performance
+    return Cache::tags(['products'])->remember($cacheKey, 300, function () use ($perPage) {
+      return $this->repository->paginate($perPage);
+    });
   }
 
   public function find(int $productId): Product
   {
-    return Cache::rememberForever("products.{$productId}", function () use ($productId) {
+    return Cache::tags(['products'])->rememberForever("products.{$productId}", function () use ($productId) {
       return $this->repository->find($productId);
     });
   }
