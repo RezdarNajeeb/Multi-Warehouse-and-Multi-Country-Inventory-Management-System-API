@@ -5,6 +5,8 @@ namespace App\Traits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response as HttpResponse;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Contracts\Pagination\CursorPaginator;
 
 trait ApiResponse
 {
@@ -13,12 +15,23 @@ trait ApiResponse
         string $message = 'Success',
         int $status = Response::HTTP_OK
     ): JsonResponse {
+        if ($data instanceof AnonymousResourceCollection && $data->resource instanceof CursorPaginator) {
+            $paginator = $data->resource->toArray();
+
+            return response()->json([
+                'message' => $message,
+                'data' => $paginator['data'],
+                'meta' => collect($paginator)->except('data'),
+            ], $status);
+        }
+
         return response()->json([
-            'status' => true,
             'message' => $message,
             'data' => $data,
         ], $status);
     }
+
+
 
     public function errorResponse(
         string $message = 'Something went wrong',
@@ -26,7 +39,6 @@ trait ApiResponse
         mixed $errors = null
     ): JsonResponse {
         return response()->json([
-            'status' => false,
             'message' => $message,
             'errors' => $errors,
         ], $status);
