@@ -9,6 +9,7 @@ use App\Repositories\InventoryTransactionRepository;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
+use App\Events\LowStockDetected;
 
 class InventoryTransferService
 {
@@ -50,6 +51,10 @@ class InventoryTransferService
       $sourceInventory->decrement('quantity', $validated['quantity']);
       $destinationInventory->increment('quantity', $validated['quantity']);
 
+      // dispatch low-stock events if thresholds reached
+      if ($sourceInventory->quantity <= $sourceInventory->min_quantity) {
+        LowStockDetected::dispatch($sourceInventory->refresh());
+      }
       // record transactions (out from source, in to destination)
       $commonData = [
         'product_id' => $validated['product_id'],

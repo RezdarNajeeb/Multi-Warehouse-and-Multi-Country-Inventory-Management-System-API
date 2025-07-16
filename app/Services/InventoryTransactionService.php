@@ -9,6 +9,7 @@ use App\Repositories\InventoryTransactionRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
+use App\Events\LowStockDetected;
 
 class InventoryTransactionService
 {
@@ -44,6 +45,11 @@ class InventoryTransactionService
 
       $validated['created_by'] = auth()->id();
       $transaction = $this->repository->create($validated);
+
+      // dispatch low-stock event if threshold reached
+      if ($inventory->quantity <= $inventory->min_quantity) {
+        LowStockDetected::dispatch($inventory->refresh());
+      }
 
       return [new InventoryTransactionResource($transaction), null, Response::HTTP_CREATED];
     });
