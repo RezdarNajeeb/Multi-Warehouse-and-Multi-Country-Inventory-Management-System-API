@@ -8,6 +8,12 @@ use Illuminate\Http\JsonResponse;
 use App\Services\InventoryTransferService;
 use App\Traits\ApiResponse;
 
+/**
+ * @OA\Tag(
+ *     name="Transfers",
+ *     description="Inter-Warehouse Transfers"
+ * )
+ */
 class InventoryTransferController extends Controller
 {
     use ApiResponse;
@@ -17,6 +23,34 @@ class InventoryTransferController extends Controller
         //
     }
 
+    /**
+     * @OA\Post(
+     *     path="/inventory-transfer",
+     *     summary="Transfer inventory between warehouses",
+     *     tags={"Transfers"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/InventoryTransferRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Transfer successful",
+     *         @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="message", type="string", example="Transfer successful")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation error",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string"),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     )
+     * )
+     */
     public function __invoke(InventoryTransferRequest $request): JsonResponse
     {
         [$data, $error, $status] = $this->service->transfer($request);
@@ -25,6 +59,6 @@ class InventoryTransferController extends Controller
             return $this->errorResponse($error, $status);
         }
 
-        return $this->successResponse($data, 'Transfer successful', $status);
+        return $this->createdResponse($data, 'Transfer successful');
     }
 }

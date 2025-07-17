@@ -4,6 +4,22 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *      schema="InventoryTransactionRequest",
+ *      title="Inventory Transaction Request",
+ *      description="Inventory transaction request body data",
+ *      type="object",
+ *      required={"product_id","warehouse_id","quantity","transaction_type","date"},
+ *      @OA\Property(property="product_id", type="integer", example=5),
+ *      @OA\Property(property="warehouse_id", type="integer", example=2),
+ *      @OA\Property(property="supplier_id", type="integer", nullable=true, example=3),
+ *      @OA\Property(property="quantity", type="integer", example=50),
+ *      @OA\Property(property="transaction_type", type="string", enum={"in","out"}, example="in"),
+ *      @OA\Property(property="date", type="string", format="date", example="2024-07-01"),
+ *      @OA\Property(property="notes", type="string", nullable=true, example="Initial stock")
+ * )
+ */
 class InventoryTransactionRequest extends FormRequest
 {
     public function authorize(): bool

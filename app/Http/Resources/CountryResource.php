@@ -14,8 +14,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="id", type="integer", example=1),
  *     @OA\Property(property="name", type="string", example="United States"),
  *     @OA\Property(property="code", type="string", example="US"),
- *     @OA\Property(property="createdAt", type="string", format="date-time"),
- *     @OA\Property(property="updatedAt", type="string", format="date-time")
+ *     @OA\Property(property="created_at", type="string", format="date-time"),
+ *     @OA\Property(property="updated_at", type="string", format="date-time")
  * )
  *
  * @mixin Country
@@ -28,8 +28,8 @@ class CountryResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'code' => $this->code,
-            'createdAt' => $this->created_at,
-            'updatedAt' => $this->updated_at,
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

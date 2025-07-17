@@ -1,35 +1,181 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "Inventory Management System API",
-        "description": "API documentation for the Multi-Warehouse & Multi-Country Inventory Management System.",
+        "title": "Multi-Warehouse & Multi-Country Inventory Management System API",
+        "description": "This documentation describes all REST endpoints exposed by the Inventory Management backend. All requests (except authentication) are protected with JWT (Bearer) tokens.",
         "contact": {
+            "name": "API Support",
             "email": "support@example.com"
-        },
-        "license": {
-            "name": "MIT",
-            "url": "https://opensource.org/licenses/MIT"
         },
         "version": "1.0.0"
     },
     "servers": [
         {
             "url": "http://my-default-host.com",
-            "description": "API Server"
+            "description": "Primary API server"
         }
     ],
     "paths": {
+        "/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Register a new user",
+                "operationId": "5d4fa5d5607ed675ba93907e1fc94534",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RegisterRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "User registered",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/RegisterResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "The given data was invalid."
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logout": {
+            "delete": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Logout the authenticated user",
+                "operationId": "091884718461f829a9a6277f90c8be66",
+                "responses": {
+                    "200": {
+                        "description": "Logged out",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Successfully logged out"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": null,
+                                            "nullable": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthenticated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Unauthenticated."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login and retrieve JWT token",
+                "operationId": "67d6d0fdd54fba132e1b6f55ca254183",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LoginRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful login",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/LoginResource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Invalid credentials"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/countries": {
             "get": {
                 "tags": [
                     "Countries"
                 ],
-                "summary": "Get list of countries",
-                "description": "Returns list of countries",
-                "operationId": "getCountriesList",
+                "summary": "List countries",
+                "operationId": "87b1e43e1fee480e4db58b462bf951c0",
                 "responses": {
                     "200": {
-                        "description": "Successful operation",
+                        "description": "OK",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -40,9 +186,6 @@
                                 }
                             }
                         }
-                    },
-                    "401": {
-                        "description": "Unauthenticated"
                     }
                 },
                 "security": [
@@ -55,9 +198,8 @@
                 "tags": [
                     "Countries"
                 ],
-                "summary": "Store new country",
-                "description": "Stores a new country and returns its data",
-                "operationId": "storeCountry",
+                "summary": "Create a new country",
+                "operationId": "c855ee3ac53d7e4f10ec9dbebb7e0848",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -70,7 +212,7 @@
                 },
                 "responses": {
                     "201": {
-                        "description": "Successful operation",
+                        "description": "Created",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -78,12 +220,1099 @@
                                 }
                             }
                         }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/countries/{country}": {
+            "get": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Get country details",
+                "operationId": "d877dacd97552783d77c13175ca12359",
+                "parameters": [
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CountryResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Update existing country",
+                "operationId": "fb493b6cbeb11b3d5413375bb601d9cd",
+                "parameters": [
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CountryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/CountryResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Countries"
+                ],
+                "summary": "Delete a country",
+                "operationId": "ef7ca86e7f19f7a4ae92f837a1a6941e",
+                "parameters": [
+                    {
+                        "name": "country",
+                        "in": "path",
+                        "description": "Country ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted successfully"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventories": {
+            "get": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "List all inventories",
+                "description": "Get a paginated list of inventories.",
+                "operationId": "a817371e777124a5b627194ef89cf950",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/InventoryResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Create inventory",
+                "description": "Store a newly created inventory record.",
+                "operationId": "2cf44ddde1cb9338cbdac1be53bd2336",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InventoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Inventory created successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventories/{inventory}": {
+            "get": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Get single inventory",
+                "description": "Show a specific inventory item.",
+                "operationId": "9b5fc42a2b197fbba89318e25814731b",
+                "parameters": [
+                    {
+                        "name": "inventory",
+                        "in": "path",
+                        "description": "Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Inventory fetched",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryResource"
+                                }
+                            }
+                        }
                     },
-                    "400": {
-                        "description": "Bad Request"
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Update inventory",
+                "description": "Update a specific inventory item.",
+                "operationId": "cf52a722929de7cc9241d5bab15fc5a7",
+                "parameters": [
+                    {
+                        "name": "inventory",
+                        "in": "path",
+                        "description": "Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InventoryRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Inventory updated successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryResource"
+                                }
+                            }
+                        }
                     },
-                    "401": {
-                        "description": "Unauthenticated"
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Delete inventory",
+                "description": "Delete a specific inventory item.",
+                "operationId": "ad4fae1349b28daa542e118c91daafbf",
+                "parameters": [
+                    {
+                        "name": "inventory",
+                        "in": "path",
+                        "description": "Inventory ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Deleted successfully"
+                    },
+                    "422": {
+                        "description": "Deletion error"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventory/global-view": {
+            "get": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Global inventory view",
+                "description": "Get a global view of inventory by optional country or warehouse.",
+                "operationId": "66c57bfd8fff4354c516d5c87aba35a6",
+                "parameters": [
+                    {
+                        "name": "country_id",
+                        "in": "query",
+                        "description": "Filter by country ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "warehouse_id",
+                        "in": "query",
+                        "description": "Filter by warehouse ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Global inventory data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventory-transactions": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "List all inventory transactions",
+                "operationId": "eabe6be4caa47f2716f49bce4fafed57",
+                "responses": {
+                    "200": {
+                        "description": "List of transactions",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/InventoryTransactionResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Record a new inventory transaction",
+                "operationId": "314fa5df72b5586c66e782293bb2d0d9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InventoryTransactionRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transaction successfully recorded",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventory-transactions/{inventory_transaction}": {
+            "get": {
+                "tags": [
+                    "Transactions"
+                ],
+                "summary": "Get a specific inventory transaction",
+                "operationId": "20d6fa21acb07007581409ea71f3325a",
+                "parameters": [
+                    {
+                        "name": "inventory_transaction",
+                        "in": "path",
+                        "description": "Transaction ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Transaction details",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/InventoryTransactionResource"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Transaction not found"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/inventory-transfer": {
+            "post": {
+                "tags": [
+                    "Transfers"
+                ],
+                "summary": "Transfer inventory between warehouses",
+                "operationId": "b0980fa9446c818d1edd6017fa397a36",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/InventoryTransferRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Transfer successful",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transfer successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "errors": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/reports/low-stock": {
+            "get": {
+                "tags": [
+                    "Reports"
+                ],
+                "summary": "Daily low stock report",
+                "operationId": "260014f05132d4e794a4e2ea7720a3fb",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/LowStockReportResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "List products",
+                "operationId": "080f057905dc32d2f11065d606dc4cd6",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/ProductResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Create product",
+                "operationId": "eddf8c7847239ddc1040daadd814e21b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/products/{product}": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get product",
+                "operationId": "c5ec5b4fb4c3790c73e9849244665f45",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Update product",
+                "operationId": "f7375aee24e5fccaf1567852e3492363",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ProductRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ProductResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Delete product",
+                "operationId": "fb827fecd27dd65fa2b514023be16841",
+                "parameters": [
+                    {
+                        "name": "product",
+                        "in": "path",
+                        "description": "Product ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/suppliers": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "List suppliers",
+                "operationId": "5d29c6f6c1ac2bd100e650844ae63ab2",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/SupplierResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Create supplier",
+                "operationId": "51d12a3c668c583e720a6cee45e0c31e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SupplierRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/suppliers/{supplier}": {
+            "get": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Get supplier",
+                "operationId": "f28f945e0e67308feb10fd1c67899074",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "Supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Update supplier",
+                "operationId": "9b774aa678dcb1a462cd6c8b301e6d3a",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "Supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SupplierRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/SupplierResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Suppliers"
+                ],
+                "summary": "Delete supplier",
+                "operationId": "958a6acc282e0be5e45e073837bd9bf0",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "Supplier ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/warehouses": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "List warehouses",
+                "operationId": "3372805147f864b12074140bdb10822c",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/WarehouseResource"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Create warehouse",
+                "operationId": "16addbb3cc60661320c929bebae025c7",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WarehouseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
+        "/warehouses/{warehouse}": {
+            "get": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Get warehouse",
+                "operationId": "6e69ae78f4a076892de523b932da2891",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "Warehouse ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Update warehouse",
+                "operationId": "3a32308a3814e91a685eedb151c994ba",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "Warehouse ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WarehouseRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Updated",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/WarehouseResource"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Warehouses"
+                ],
+                "summary": "Delete warehouse",
+                "operationId": "fd55b5a19a7e38434158c8bd4aa45847",
+                "parameters": [
+                    {
+                        "name": "warehouse",
+                        "in": "path",
+                        "description": "Warehouse ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "No Content"
                     }
                 },
                 "security": [
@@ -96,6 +1325,53 @@
     },
     "components": {
         "schemas": {
+            "LoginRequest": {
+                "title": "Login Request",
+                "description": "Login request body data",
+                "required": [
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterRequest": {
+                "title": "Register Request",
+                "description": "Register request body data",
+                "required": [
+                    "name",
+                    "email",
+                    "password"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "example": "john.doe@example.com"
+                    },
+                    "password": {
+                        "type": "string",
+                        "format": "password",
+                        "example": "password123"
+                    }
+                },
+                "type": "object"
+            },
             "CountryRequest": {
                 "title": "Country Request",
                 "description": "Country request body data",
@@ -118,6 +1394,235 @@
                 },
                 "type": "object"
             },
+            "InventoryRequest": {
+                "title": "Inventory Request",
+                "description": "Inventory request body data",
+                "required": [
+                    "product_id",
+                    "warehouse_id",
+                    "quantity",
+                    "min_quantity"
+                ],
+                "properties": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 150
+                    },
+                    "min_quantity": {
+                        "type": "integer",
+                        "example": 20
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryTransactionRequest": {
+                "title": "Inventory Transaction Request",
+                "description": "Inventory transaction request body data",
+                "required": [
+                    "product_id",
+                    "warehouse_id",
+                    "quantity",
+                    "transaction_type",
+                    "date"
+                ],
+                "properties": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "supplier_id": {
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "transaction_type": {
+                        "type": "string",
+                        "enum": [
+                            "in",
+                            "out"
+                        ],
+                        "example": "in"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-07-01"
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Initial stock",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryTransferRequest": {
+                "title": "Inventory Transfer Request",
+                "description": "Inventory transfer request body data",
+                "required": [
+                    "product_id",
+                    "source_warehouse_id",
+                    "destination_warehouse_id",
+                    "quantity"
+                ],
+                "properties": {
+                    "product_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "source_warehouse_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "destination_warehouse_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 25
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-07-05",
+                        "nullable": true
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Rebalancing stock levels",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "ProductRequest": {
+                "title": "Product Request",
+                "description": "Product request body data",
+                "required": [
+                    "name",
+                    "sku",
+                    "price"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "iPhone 14"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "maxLength": 60,
+                        "example": "IPH-14-128BLK"
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Apple iPhone 14 128GB Black"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 999.99
+                    }
+                },
+                "type": "object"
+            },
+            "SupplierRequest": {
+                "title": "Supplier Request",
+                "description": "Supplier request body data",
+                "required": [
+                    "name",
+                    "contact_info",
+                    "address"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Acme Supplies"
+                    },
+                    "contact_info": {
+                        "type": "object",
+                        "example": {
+                            "phone": "+1-555-1234",
+                            "email": "sales@acme.com"
+                        }
+                    },
+                    "address": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "123 Industrial Rd, NY"
+                    }
+                },
+                "type": "object"
+            },
+            "WarehouseRequest": {
+                "title": "Warehouse Request",
+                "description": "Warehouse request body data",
+                "required": [
+                    "name",
+                    "location",
+                    "country_id"
+                ],
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "example": "Central Warehouse"
+                    },
+                    "location": {
+                        "type": "string",
+                        "maxLength": 120,
+                        "example": "New York"
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    }
+                },
+                "type": "object"
+            },
+            "LoginResource": {
+                "title": "Login Resource",
+                "description": "Login response with JWT token",
+                "properties": {
+                    "token": {
+                        "type": "string",
+                        "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    }
+                },
+                "type": "object"
+            },
+            "RegisterResource": {
+                "title": "Register Resource",
+                "description": "Register response with user data",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/UserResource"
+                    }
+                },
+                "type": "object"
+            },
             "CountryResource": {
                 "title": "Country Resource",
                 "description": "Country resource representation",
@@ -134,13 +1639,291 @@
                         "type": "string",
                         "example": "US"
                     },
-                    "createdAt": {
+                    "created_at": {
                         "type": "string",
                         "format": "date-time"
                     },
-                    "updatedAt": {
+                    "updated_at": {
                         "type": "string",
                         "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryResource": {
+                "title": "Inventory Resource",
+                "description": "Inventory resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 150
+                    },
+                    "min_quantity": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "relations": {
+                        "properties": {
+                            "product": {
+                                "$ref": "#/components/schemas/ProductResource"
+                            },
+                            "warehouse": {
+                                "$ref": "#/components/schemas/WarehouseResource"
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            },
+            "InventoryTransactionResource": {
+                "title": "Inventory Transaction Resource",
+                "description": "Inventory transaction resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "product_id": {
+                        "type": "integer",
+                        "example": 5
+                    },
+                    "warehouse_id": {
+                        "type": "integer",
+                        "example": 2
+                    },
+                    "supplier_id": {
+                        "type": "integer",
+                        "example": 3,
+                        "nullable": true
+                    },
+                    "quantity": {
+                        "type": "integer",
+                        "example": 50
+                    },
+                    "transaction_type": {
+                        "type": "string",
+                        "example": "in"
+                    },
+                    "date": {
+                        "type": "string",
+                        "format": "date",
+                        "example": "2024-07-01"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "created_by": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "notes": {
+                        "type": "string",
+                        "example": "Initial stock",
+                        "nullable": true
+                    }
+                },
+                "type": "object"
+            },
+            "LowStockReportResource": {
+                "title": "Low Stock Report Resource",
+                "description": "Low stock report representation",
+                "properties": {
+                    "productName": {
+                        "type": "string",
+                        "example": "iPhone 14"
+                    },
+                    "SKU": {
+                        "type": "string",
+                        "example": "IPH-14-128BLK"
+                    },
+                    "currentQuantity": {
+                        "type": "integer",
+                        "example": 10
+                    },
+                    "minQuantity": {
+                        "type": "integer",
+                        "example": 20
+                    },
+                    "warehouseLocation": {
+                        "type": "string",
+                        "example": "New York"
+                    },
+                    "country": {
+                        "type": "string",
+                        "example": "United States"
+                    },
+                    "supplierContactInfo": {
+                        "type": "object",
+                        "example": {
+                            "phone": "+1-555-1234",
+                            "email": "sales@acme.com"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "ProductResource": {
+                "title": "Product Resource",
+                "description": "Product resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "iPhone 14"
+                    },
+                    "sku": {
+                        "type": "string",
+                        "example": "IPH-14-128BLK"
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": true
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Apple iPhone 14 128GB Black"
+                    },
+                    "price": {
+                        "type": "number",
+                        "format": "float",
+                        "example": 999.99
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "SupplierResource": {
+                "title": "Supplier Resource",
+                "description": "Supplier resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Acme Supplies"
+                    },
+                    "contact_info": {
+                        "type": "object",
+                        "example": {
+                            "phone": "+1-555-1234",
+                            "email": "sales@acme.com"
+                        }
+                    },
+                    "address": {
+                        "type": "string",
+                        "example": "123 Industrial Rd, NY"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "UserResource": {
+                "title": "User Resource",
+                "description": "User resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "John Doe"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "john.doe@example.com"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "type": "object"
+            },
+            "WarehouseResource": {
+                "title": "Warehouse Resource",
+                "description": "Warehouse resource representation",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "country_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "name": {
+                        "type": "string",
+                        "example": "Central Warehouse"
+                    },
+                    "location": {
+                        "type": "string",
+                        "example": "New York"
+                    },
+                    "created_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "updated_at": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "relations": {
+                        "properties": {
+                            "country": {
+                                "$ref": "#/components/schemas/CountryResource"
+                            }
+                        },
+                        "type": "object"
                     }
                 },
                 "type": "object"
@@ -156,8 +1939,40 @@
     },
     "tags": [
         {
+            "name": "Auth",
+            "description": "Authentication Endpoints"
+        },
+        {
             "name": "Countries",
-            "description": "API Endpoints for Countries"
+            "description": "Country CRUD Endpoints"
+        },
+        {
+            "name": "Inventories",
+            "description": "Inventory Management Endpoints"
+        },
+        {
+            "name": "Transactions",
+            "description": "Inventory IN / OUT Transactions"
+        },
+        {
+            "name": "Transfers",
+            "description": "Inter-Warehouse Transfers"
+        },
+        {
+            "name": "Reports",
+            "description": "Reporting Endpoints"
+        },
+        {
+            "name": "Products",
+            "description": "Product CRUD Endpoints"
+        },
+        {
+            "name": "Suppliers",
+            "description": "Supplier CRUD Endpoints"
+        },
+        {
+            "name": "Warehouses",
+            "description": "Warehouse CRUD Endpoints"
         }
     ]
 }

@@ -4,6 +4,21 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @OA\Schema(
+ *      schema="InventoryTransferRequest",
+ *      title="Inventory Transfer Request",
+ *      description="Inventory transfer request body data",
+ *      type="object",
+ *      required={"product_id","source_warehouse_id","destination_warehouse_id","quantity"},
+ *      @OA\Property(property="product_id", type="integer", example=5),
+ *      @OA\Property(property="source_warehouse_id", type="integer", example=1),
+ *      @OA\Property(property="destination_warehouse_id", type="integer", example=2),
+ *      @OA\Property(property="quantity", type="integer", example=25),
+ *      @OA\Property(property="date", type="string", format="date", nullable=true, example="2024-07-05"),
+ *      @OA\Property(property="notes", type="string", nullable=true, example="Rebalancing stock levels")
+ * )
+ */
 class InventoryTransferRequest extends FormRequest
 {
     /**

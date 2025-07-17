@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 /**
  * @OA\Tag(
  *     name="Countries",
- *     description="API Endpoints for Countries"
+ *     description="Country CRUD Endpoints"
  * )
  */
 class CountryController extends Controller
@@ -28,24 +28,18 @@ class CountryController extends Controller
 
     /**
      * @OA\Get(
-     *      path="/countries",
-     *      operationId="getCountriesList",
-     *      tags={"Countries"},
-     *      summary="Get list of countries",
-     *      description="Returns list of countries",
-     *      security={{"bearerAuth":{}}},
-     *      @OA\Response(
-     *          response=200,
-     *          description="Successful operation",
-     *          @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/CountryResource"))
-     *       ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      )
+     *     path="/countries",
+     *     summary="List countries",
+     *     tags={"Countries"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/CountryResource"))
+     *     )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
         return $this->successResponse(
             CountryResource::collection($this->countryService->list())
@@ -54,29 +48,19 @@ class CountryController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/countries",
-     *      operationId="storeCountry",
-     *      tags={"Countries"},
-     *      summary="Store new country",
-     *      description="Stores a new country and returns its data",
-     *      security={{"bearerAuth":{}}},
-     *      @OA\RequestBody(
-     *          required=true,
-     *          @OA\JsonContent(ref="#/components/schemas/CountryRequest")
-     *      ),
-     *      @OA\Response(
-     *          response=201,
-     *          description="Successful operation",
-     *          @OA\JsonContent(ref="#/components/schemas/CountryResource")
-     *       ),
-     *      @OA\Response(
-     *          response=400,
-     *          description="Bad Request"
-     *      ),
-     *      @OA\Response(
-     *          response=401,
-     *          description="Unauthenticated",
-     *      )
+     *     path="/countries",
+     *     summary="Create a new country",
+     *     tags={"Countries"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/CountryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="Created",
+     *         @OA\JsonContent(ref="#/components/schemas/CountryResource")
+     *     )
      * )
      */
     public function store(CountryRequest $request): JsonResponse
@@ -86,11 +70,55 @@ class CountryController extends Controller
         );
     }
 
+    /**
+     * @OA\Get(
+     *     path="/countries/{country}",
+     *     summary="Get country details",
+     *     tags={"Countries"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="country",
+     *         in="path",
+     *         required=true,
+     *         description="Country ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="OK",
+     *         @OA\JsonContent(ref="#/components/schemas/CountryResource")
+     *     )
+     * )
+     */
     public function show(Country $country): JsonResponse
     {
         return $this->successResponse(new CountryResource($country));
     }
 
+    /**
+     * @OA\Put(
+     *     path="/countries/{country}",
+     *     summary="Update existing country",
+     *     tags={"Countries"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="country",
+     *         in="path",
+     *         required=true,
+     *         description="Country ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/CountryRequest")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Updated",
+     *         @OA\JsonContent(ref="#/components/schemas/CountryResource")
+     *     )
+     * )
+     */
     public function update(CountryRequest $request, Country $country): JsonResponse
     {
         return $this->successResponse(
@@ -99,6 +127,25 @@ class CountryController extends Controller
         );
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/countries/{country}",
+     *     summary="Delete a country",
+     *     tags={"Countries"},
+     *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="country",
+     *         in="path",
+     *         required=true,
+     *         description="Country ID",
+     *         @OA\Schema(type="integer", example=1)
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Deleted successfully"
+     *     )
+     * )
+     */
     public function destroy(Country $country): Response
     {
         $this->countryService->delete($country);
