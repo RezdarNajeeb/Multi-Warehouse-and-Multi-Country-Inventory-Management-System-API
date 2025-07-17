@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+use Illuminate\Database\Eloquent\Builder;
 class Inventory extends Model
 {
     use HasFactory;
@@ -18,6 +18,22 @@ class Inventory extends Model
         'min_quantity',
     ];
 
+    protected $casts = [
+        'total_stock' => 'integer',
+    ];
+
+    // scopes
+    public function scopeFilter($query, array $filters): Builder
+    {
+        return $query
+        ->when($filters['country_id'] ?? null, fn($q, $id) =>
+            $q->whereHas('warehouse', fn($wq) => $wq->where('country_id', $id))
+        )
+        ->when($filters['warehouse_id'] ?? null, fn($q, $id) =>
+            $q->where('warehouse_id', $id)
+        );
+    }
+
     // relations
     public function product(): BelongsTo
     {
@@ -28,13 +44,6 @@ class Inventory extends Model
     {
         return $this->belongsTo(Warehouse::class);
     }
-
-    // unique pair of product and warehouse relationship
-//    public function uniqueProductWarehouse(): BelongsTo
-////    {
-////        return $this->belongsTo(Product::class, 'product_id')
-////            ->where('warehouse_id', $this->warehouse_id);
-////    }
 
     public function transactions(): HasMany
     {

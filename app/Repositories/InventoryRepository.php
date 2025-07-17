@@ -3,7 +3,6 @@
 namespace App\Repositories;
 
 use App\Models\Inventory;
-use App\Models\Product;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Collection;
 
@@ -38,39 +37,12 @@ class InventoryRepository
       ->firstOrFail();
   }
 
-  public function getGlobalView(?int $countryId = null, ?int $warehouseId = null): Collection
+  public function getGlobalView(array $filters): Collection
   {
-    $products = Product::query()
-      ->select('id', 'name', 'sku')
-      ->when($countryId || $warehouseId, function ($q) use ($countryId, $warehouseId) {
-        $q->whereHas('inventories', function ($invQuery) use ($countryId, $warehouseId) {
-          if ($countryId) {
-            $invQuery->whereHas('warehouse', fn($w) => $w->where('country_id', $countryId));
-          }
-          if ($warehouseId) {
-            $invQuery->where('warehouse_id', $warehouseId);
-          }
-        });
-      })
-      ->withSum(['inventories as total_quantity' => function ($invQuery) use ($countryId, $warehouseId) {
-        if ($countryId) {
-          $invQuery->whereHas('warehouse', fn($w) => $w->where('country_id', $countryId));
-        }
-        if ($warehouseId) {
-          $invQuery->where('warehouse_id', $warehouseId);
-        }
-      }], 'quantity')
-      ->orderBy('name')
-      ->get()
-      ->map(function ($product) {
-        return [
-          'product_id'     => $product->id,
-          'name'           => $product->name,
-          'sku'            => $product->sku,
-          'total_quantity' => (int) $product->total_quantity,
-        ];
-      });
-
-    return $products;
+    return Inventory::with('product:id,name,sku')
+      ->selectRaw('product_id, SUM(quantity) as total_stock')
+      ->filter($filters)
+      ->groupBy('product_id')
+      ->get();
   }
 }

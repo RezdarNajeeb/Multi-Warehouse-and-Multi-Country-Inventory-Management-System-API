@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InventoryRequest;
 use App\Http\Resources\InventoryResource;
+use App\Http\Resources\GlobalStockResource;
 use App\Models\Inventory;
 use App\Services\InventoryService;
 use App\Traits\ApiResponse;
@@ -205,11 +206,15 @@ class InventoryController extends Controller
      */
     public function getGlobalView(Request $request): JsonResponse
     {
-        $data = $this->inventoryService->getGlobalView(
-            $request->integer('country_id'),
-            $request->integer('warehouse_id')
+        return $this->successResponse(
+            GlobalStockResource::collection(
+                $this->inventoryService->getGlobalView(
+                    $request->only([
+                        'country_id',
+                        'warehouse_id'
+                    ])
+                )
+            )
         );
-
-        return $this->successResponse($data);
     }
 }

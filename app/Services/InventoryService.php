@@ -57,9 +57,9 @@ class InventoryService
     return null;
   }
 
-  public function getGlobalView(?int $countryId = null, ?int $warehouseId = null): Collection
+  public function getGlobalView(array $filters): Collection
   {
-    return $this->repository->getGlobalView($countryId, $warehouseId);
+    return $this->repository->getGlobalView($filters);
   }
 
   private function hasStockOrHistory(Inventory $inventory): bool
