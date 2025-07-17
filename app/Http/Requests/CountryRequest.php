@@ -24,15 +24,15 @@ class CountryRequest extends FormRequest
 
     public function rules(): array
     {
-        $isCreate = $this->isMethod('post');
+        $isStore = $this->routeIs('countries.store');
 
         return [
-            'name' => ($isCreate ? 'required' : 'sometimes') . '|string|min:4|max:100',
+            'name' => ($isStore ? 'required' : 'sometimes') . '|string|min:4|max:100',
 
             'code' => [
-                $isCreate ? 'required' : 'sometimes',
+                $isStore ? 'required' : 'sometimes',
                 'regex:/^([A-Z]{2,3}|\d{3})$/',
-                'unique:countries,code' . ($isCreate ? '' : ',' . $this->route('country')->id),
+                'unique:countries,code' . ($isStore ? '' : ',' . $this->route('country')->id),
             ],
         ];
     }

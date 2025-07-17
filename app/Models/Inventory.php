@@ -29,6 +29,13 @@ class Inventory extends Model
         return $this->belongsTo(Warehouse::class);
     }
 
+    // unique pair of product and warehouse relationship
+//    public function uniqueProductWarehouse(): BelongsTo
+////    {
+////        return $this->belongsTo(Product::class, 'product_id')
+////            ->where('warehouse_id', $this->warehouse_id);
+////    }
+
     public function transactions(): HasMany
     {
         // only transactions for this inventory in the warehouse

@@ -16,7 +16,7 @@ class LowStockReportRepository
       'warehouse:id,location,country_id',
       'warehouse.country:id,name',
     ])
-      ->whereColumn('quantity', '<=', 'min_quantity')
+      ->whereColumn('quantity', '=', 'min_quantity')
       ->get();
   }
 }

@@ -25,7 +25,7 @@ class SupplierRequest extends FormRequest
 
     public function rules(): array
     {
-        $requiredOrSometimes = $this->isMethod('post') ? 'required' : 'sometimes';
+        $requiredOrSometimes = $this->routeIs('suppliers.store') ? 'required' : 'sometimes';
 
         return [
             'name' => "{$requiredOrSometimes}|string|max:255",

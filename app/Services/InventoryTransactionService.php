@@ -43,7 +43,7 @@ class InventoryTransactionService
         $inventory->decrement('quantity', $validated['quantity']);
       }
 
-      if ($inventory->quantity <= $inventory->min_quantity) {
+      if ($inventory->quantity === $inventory->min_quantity) {
         event(new LowStockDetected(collect([$inventory])));
       }
 

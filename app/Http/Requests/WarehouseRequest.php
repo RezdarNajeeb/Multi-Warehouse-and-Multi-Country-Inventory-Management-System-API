@@ -25,12 +25,12 @@ class WarehouseRequest extends FormRequest
 
     public function rules(): array
     {
-        $requiredOrSometimes = $this->isMethod('post') ? 'required' : 'sometimes';
+        $requiredOrSometimes = $this->routeIs('warehouses.store') ? 'required' : 'sometimes';
 
         return [
             'name' => $requiredOrSometimes . '|string|max:255',
             'location' => $requiredOrSometimes . '|string|max:120',
-            'country_id' => 'required|integer|exists:countries,id',
+            'country_id' => "$requiredOrSometimes|integer|exists:countries,id",
         ];
     }
 }

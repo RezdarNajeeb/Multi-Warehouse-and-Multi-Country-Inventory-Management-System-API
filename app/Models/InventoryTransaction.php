@@ -21,6 +21,13 @@ class InventoryTransaction extends Model
         'notes',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'date' => 'timestamp',
+        ];
+    }
+
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);
@@ -39,12 +46,5 @@ class InventoryTransaction extends Model
     public function createdBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
-    }
-
-    protected function casts(): array
-    {
-        return [
-            'date' => 'timestamp',
-        ];
     }
 }

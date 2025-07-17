@@ -27,7 +27,7 @@ class InventoryRequest extends FormRequest
 
     public function rules(): array
     {
-        $requiredOrSometimes = $this->isMethod('post') ? 'required' : 'sometimes';
+        $requiredOrSometimes = $this->routeIs('inventories.store') ? 'required' : 'sometimes';
 
         return [
             'product_id'    => [
@@ -38,7 +38,7 @@ class InventoryRequest extends FormRequest
                     ->ignore($this->inventory?->id),
             ],
             'warehouse_id'  => [$requiredOrSometimes, 'exists:warehouses,id'],
-            'quantity'      => [$requiredOrSometimes, 'integer', 'min:0', 'gte:min_quantity'],
+            'quantity'      => [$requiredOrSometimes, 'integer', 'min:0'],
             'min_quantity'  => [$requiredOrSometimes, 'integer', 'min:0', 'lte:quantity'],
         ];
     }

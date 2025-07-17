@@ -21,7 +21,7 @@ class ProductService
     $cacheKey = "products:paginate:{$perPage}:{$cursor}";
 
     // Cache paginated product lists for 5 minutes to boost read performance
-    return Cache::tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($perPage) {
+    return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($perPage) {
       return $this->repository->paginate($perPage);
     });
   }
@@ -30,7 +30,7 @@ class ProductService
   {
     $cacheKey = "products:single:{$productId}";
 
-    return Cache::tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($productId) {
+    return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'), function () use ($productId) {
       return $this->repository->find($productId);
     });
   }

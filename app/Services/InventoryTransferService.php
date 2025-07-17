@@ -51,7 +51,7 @@ class InventoryTransferService
       $sourceInventory->decrement('quantity', $validated['quantity']);
       $destinationInventory->increment('quantity', $validated['quantity']);
 
-      if ($sourceInventory->quantity <= $sourceInventory->min_quantity) {
+      if ($sourceInventory->quantity === $sourceInventory->min_quantity) {
         event(new LowStockDetected(collect([$sourceInventory])));
       }
 

@@ -27,13 +27,13 @@ class ProductRequest extends FormRequest
 
     public function rules(): array
     {
-        $isCreate = $this->isMethod('post');
-        $requiredOrSometimes = $isCreate ? 'required' : 'sometimes';
+        $isStore = $this->routeIs('products.store');
+        $requiredOrSometimes = $isStore ? 'required' : 'sometimes';
 
         return [
             'name' => "{$requiredOrSometimes}|string|max:255",
             'sku' => "{$requiredOrSometimes}|string|max:60|unique:products,sku" .
-                ($isCreate ? '' : ",{$this->route('product')?->id}"),
+                ($isStore ? '' : ",{$this->route('product')?->id}"),
             'status' => 'sometimes|boolean',
             'description' => 'sometimes|string|max:65535',
             'price' => "{$requiredOrSometimes}|numeric|min:0",

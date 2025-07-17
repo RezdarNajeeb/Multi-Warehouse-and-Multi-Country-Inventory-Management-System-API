@@ -10,7 +10,7 @@ return new class extends Migration {
     {
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 120); // if we need longer names then we can make it 255 chars or text
+            $table->string('name');
             $table->string('location'); // if we have a long location more than 255 chars then we can use text
             $table->foreignIdFor(Country::class)->constrained('countries')->restrictOnDelete();
             $table->timestamps();

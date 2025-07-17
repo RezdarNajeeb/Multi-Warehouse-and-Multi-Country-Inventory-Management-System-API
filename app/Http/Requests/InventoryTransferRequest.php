@@ -38,7 +38,7 @@ class InventoryTransferRequest extends FormRequest
     {
         return [
             'product_id' => 'required|integer|exists:products,id',
-            'source_warehouse_id' => 'required|integer|exists:warehouses,id|different:destination_warehouse_id',
+            'source_warehouse_id' => 'required|integer|exists:warehouses,id',
             'destination_warehouse_id' => 'required|integer|exists:warehouses,id|different:source_warehouse_id',
             'quantity' => 'required|integer|min:1',
             'date' => 'nullable|date|after_or_equal:today',

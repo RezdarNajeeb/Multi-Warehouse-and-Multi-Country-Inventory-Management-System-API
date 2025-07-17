@@ -103,6 +103,23 @@ All endpoints are prefixed with `/api`. See the Swagger documentation for detail
 -   `GET /inventory/global-view` (Authenticated)
 -   `GET /reports/low-stock` (Authenticated)
 
+## Generating / Updating Swagger Documentation
+
+This project ships with [L5-Swagger](https://github.com/DarkaOnLine/L5-Swagger). Any time you change controllers, requests, resources, or the consolidated docs found in `app/Swagger/ApiDocumentation.php`, regenerate the JSON that powers Swagger-UI.
+
+```bash
+# Generate the latest swagger.json & refresh UI assets
+php artisan l5-swagger:generate
+```
+
+You can also simply hit the documentation route in your browser (`/api/documentation`), and L5-Swagger will compile the docs on-the-fly (if `L5_SWAGGER_GENERATE_ALWAYS=true` is set in `.env`).
+
+Common troubleshooting tips:
+
+1. **Missing endpoints** – clear cached JSON (`storage/api-docs`) and regenerate.
+2. **Annotation errors** – run the generator with `-vvv` to get verbose output.
+3. **Auth blocked** – Swagger-UI needs a **Bearer** token for protected routes. Click the green `Authorize` button and paste a valid JWT to make authenticated calls directly from the UI.
+
 ## Running the Low-Stock Check Manually
 
 You can trigger the low-stock check manually by running the following Artisan command:
