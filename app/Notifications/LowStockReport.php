@@ -16,7 +16,7 @@ class LowStockReport extends Notification implements ShouldQueue
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Collection $lowStocks)
+    public function __construct(public Collection $lowStocks, public array $channels = ['mail', 'slack'])
     {
         //
     }
@@ -28,7 +28,7 @@ class LowStockReport extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'slack'];
+        return $this->channels;
     }
 
     /**
