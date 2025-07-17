@@ -101,6 +101,6 @@ class AuthController extends Controller
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->successResponse($token);
+        return $this->successResponse(['token' => $token]);
     }
 }
