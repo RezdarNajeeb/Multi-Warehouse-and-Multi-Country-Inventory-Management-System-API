@@ -42,18 +42,28 @@ class LowStockReport extends Notification implements ShouldQueue
             ->line('The following products are below their minimum stock levels:');
 
         foreach ($this->lowStocks as $lowStock) {
-            $product = $lowStock->product;
-            $supplier = $product?->supplier;
-            $contactInfo = json_decode($supplier?->contact_info ?? '{}', true);
+            $product      = $lowStock->product;
+            $supplier     = $product?->supplier;
+            $contactInfo  = $supplier?->contact_info ?? [];
 
-            $email = $contactInfo['email'] ?? 'N/A';
-            $phone = $contactInfo['phone'] ?? 'N/A';
-
+            // Core details
             $mail->line("• {$product->name} (SKU: {$product->sku})")
-                ->line("  Qty: {$lowStock->quantity} / Min: {$lowStock->min_quantity}")
-                ->line("  Warehouse: {$lowStock->warehouse->location} ({$lowStock->warehouse->country->name})")
-                ->line("  Supplier Contact Info: Email: {$email} / Phone: {$phone}")
-                ->line('');
+                 ->line("  Qty: {$lowStock->quantity} / Min: {$lowStock->min_quantity}")
+                 ->line("  Warehouse: {$lowStock->warehouse->location} ({$lowStock->warehouse->country->name})");
+
+            // Dynamic contact info handling
+            if (!empty($contactInfo) && is_array($contactInfo)) {
+                $mail->line("  Supplier Contact Info:");
+                foreach ($contactInfo as $key => $value) {
+                    $label = ucfirst(str_replace('_', ' ', $key));
+                    $mail->line("    {$label}: {$value}");
+                }
+            } else {
+                $mail->line("  Supplier Contact Info: N/A");
+            }
+
+            // Spacer line between products
+            $mail->line('');
         }
 
         return $mail;

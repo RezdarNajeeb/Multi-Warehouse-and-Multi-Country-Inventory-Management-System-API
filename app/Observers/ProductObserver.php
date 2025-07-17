@@ -11,7 +11,7 @@ class ProductObserver
      */
     public function created(): void
     {
-        Cache::tags(['products'])->flush();
+        Cache::store('redis')->tags(['products'])->flush();
     }
  
     /**
@@ -19,7 +19,7 @@ class ProductObserver
      */
     public function updated(): void
     {
-        Cache::tags(['products'])->flush();
+        Cache::store('redis')->tags(['products'])->flush();
     }
  
     /**
@@ -27,6 +27,6 @@ class ProductObserver
      */
     public function deleted(): void
     {
-        Cache::tags(['products'])->flush();
+        Cache::store('redis')->tags(['products'])->flush();
     }
 }

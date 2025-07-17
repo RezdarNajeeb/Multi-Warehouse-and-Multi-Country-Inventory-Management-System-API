@@ -37,7 +37,7 @@ class SupplierRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'contact_info.array' => 'The contact information must be a valid object.',
+            'contact_info.array' => 'The contact information must be a valid json object.',
         ];
     }
 }

@@ -12,10 +12,10 @@ class SupplierFactory extends Factory
     {
         return [
             'name' => fake()->name(),
-            'contact_info' => json_encode([
+            'contact_info' => [
                 'email' => fake()->safeEmail(),
                 'phone' => fake()->phoneNumber(),
-            ]),
+            ],
             'address' => fake()->address(),
         ];
     }

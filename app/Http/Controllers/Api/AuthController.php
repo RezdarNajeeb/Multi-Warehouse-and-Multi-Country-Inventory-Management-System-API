@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Http\Resources\Auth\LoginResource;
-use App\Http\Resources\Auth\RegisterResource;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -32,7 +30,7 @@ class AuthController extends Controller
      *          required=true,
      *          @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
      *      ),
-     *      @OA\Response(response=201, description="User registered", @OA\JsonContent(ref="#/components/schemas/RegisterResource")),
+     *      @OA\Response(response=201, description="User registered", @OA\JsonContent(type=object)),
      *      @OA\Response(response=422, description="Validation error",
      *          @OA\JsonContent(
      *              type="object",
@@ -46,7 +44,7 @@ class AuthController extends Controller
     {
         $result = $this->authService->register($request->validated());
 
-        return $this->createdResponse(new RegisterResource($result));
+        return $this->createdResponse($result);
     }
 
     /**
@@ -103,6 +101,6 @@ class AuthController extends Controller
             return $this->errorResponse('Invalid credentials', 401);
         }
 
-        return $this->successResponse(new LoginResource($token));
+        return $this->successResponse($token);
     }
 }

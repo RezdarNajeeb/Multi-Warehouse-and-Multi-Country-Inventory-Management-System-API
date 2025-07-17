@@ -8,7 +8,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class GlobalStockResource extends JsonResource
 {
     /**
-     * @mixin Inventory
+     * @mixin Inventory, Product
      *
      * @OA\Schema(
      *     schema="GlobalStockResource",
