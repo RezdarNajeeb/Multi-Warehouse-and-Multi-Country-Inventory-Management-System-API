@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Events\LowStockDetected;
 use App\Http\Requests\InventoryRequest;
 use App\Models\Inventory;
 use App\Repositories\InventoryRepository;
@@ -22,7 +23,11 @@ class InventoryService
 
   public function create(InventoryRequest $request): Inventory
   {
-    return $this->repository->create($request->validated());
+    $inventory = $this->repository->create($request->validated());
+
+    $this->dispatchLowStockEvent($inventory);
+
+    return $inventory;
   }
 
   /**
@@ -36,6 +41,8 @@ class InventoryService
     $data = $locked ? $request->safe()->only(['quantity', 'min_quantity']) : $request->validated();
 
     $updated = $this->repository->update($inventory, $data);
+
+    $this->dispatchLowStockEvent($updated);
 
     $message = $locked
       ? 'Only quantity and min_quantity were updated because stock or history exists.'
@@ -65,5 +72,12 @@ class InventoryService
   private function hasStockOrHistory(Inventory $inventory): bool
   {
     return $inventory->transactions()->exists() || $inventory->quantity > 0;
+  }
+
+  private function dispatchLowStockEvent(Inventory $inventory): void
+  {
+    if ($inventory->quantity <= $inventory->min_quantity) {
+      event(new LowStockDetected(collect([$inventory])));
+    }
   }
 }

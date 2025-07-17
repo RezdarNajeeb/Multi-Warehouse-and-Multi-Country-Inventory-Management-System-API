@@ -36,7 +36,7 @@ class InventoryTransferService
       );
 
       // ensure sufficient stock (cannot go below min_quantity)
-      if ($sourceInventory->quantity - $validated['quantity'] < $sourceInventory->min_quantity) {
+      if ($sourceInventory->quantity - $validated['quantity'] < 0) {
         return [null, 'Insufficient stock in the source warehouse', Response::HTTP_UNPROCESSABLE_ENTITY];
       }
 
@@ -50,7 +50,7 @@ class InventoryTransferService
       $sourceInventory->decrement('quantity', $validated['quantity']);
       $destinationInventory->increment('quantity', $validated['quantity']);
 
-      if ($sourceInventory->quantity === $sourceInventory->min_quantity) {
+      if ($sourceInventory->quantity <= $sourceInventory->min_quantity) {
         event(new LowStockDetected(collect([$sourceInventory])));
       }
 

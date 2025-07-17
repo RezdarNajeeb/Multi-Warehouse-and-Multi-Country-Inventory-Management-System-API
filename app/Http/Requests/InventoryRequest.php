@@ -39,7 +39,7 @@ class InventoryRequest extends FormRequest
             ],
             'warehouse_id'  => [$requiredOrSometimes, 'exists:warehouses,id'],
             'quantity'      => [$requiredOrSometimes, 'integer', 'min:0'],
-            'min_quantity'  => [$requiredOrSometimes, 'integer', 'min:0', 'lte:quantity'],
+            'min_quantity'  => [$requiredOrSometimes, 'integer', 'min:0'],
         ];
     }
 }

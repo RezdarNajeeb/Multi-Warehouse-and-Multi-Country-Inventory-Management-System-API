@@ -11,8 +11,8 @@ return new class extends Migration {
             $table->id();
             $table->foreignIdFor(Supplier::class)->constrained()->cascadeOnUpdate()->restrictOnDelete();
             $table->string('name');
-            $table->string('sku', 64)->unique();
-            $table->boolean('status')->default(true);
+            $table->string('sku', 50)->unique();
+            $table->boolean('status')->default(true)->comment('0: inactive, 1: active');
             $table->text('description')->nullable();
             $table->decimal('price', 10); // we can adjust the precision and scale as needed
             $table->timestamps();

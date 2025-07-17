@@ -37,13 +37,13 @@ class InventoryTransactionService
       if ($validated['transaction_type'] === 'in') {
         $inventory->increment('quantity', $validated['quantity']);
       } else {
-        if ($inventory->quantity - $validated['quantity'] < $inventory->min_quantity) {
+        if ($inventory->quantity - $validated['quantity'] < 0) {
           return [null, 'Insufficient stock', Response::HTTP_UNPROCESSABLE_ENTITY];
         }
         $inventory->decrement('quantity', $validated['quantity']);
       }
 
-      if ($inventory->quantity === $inventory->min_quantity) {
+      if ($inventory->quantity <= $inventory->min_quantity) {
         event(new LowStockDetected(collect([$inventory])));
       }
 

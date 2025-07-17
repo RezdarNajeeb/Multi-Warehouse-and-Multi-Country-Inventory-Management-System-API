@@ -9,10 +9,12 @@ return new class extends Migration {
     {
         Schema::create('suppliers', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
+            $table->string('name', 100); // we can adjust the length as needed
             $table->json('contact_info');
-            $table->string('address');
+            $table->string('address')->nullable(); // if we need more than 255 chars then we can use text
             $table->timestamps();
+
+            $table->index('name'); // for fast lookup searches
         });
     }
 
