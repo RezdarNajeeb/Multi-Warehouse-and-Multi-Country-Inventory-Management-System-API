@@ -7,7 +7,6 @@ use App\Http\Resources\InventoryResource;
 use App\Repositories\InventoryRepository;
 use App\Repositories\InventoryTransactionRepository;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use App\Events\LowStockDetected;
 
@@ -31,7 +30,7 @@ class InventoryTransferService
 
     return DB::transaction(function () use ($validated) {
       // lock source inventory
-      $sourceInventory = $this->inventories->lockForUpdate(
+      $sourceInventory = $this->inventories->lockAndGet(
         $validated['product_id'],
         $validated['source_warehouse_id']
       );
@@ -42,7 +41,7 @@ class InventoryTransferService
       }
 
       // lock destination inventory
-      $destinationInventory = $this->inventories->lockForUpdate(
+      $destinationInventory = $this->inventories->lockAndGet(
         $validated['product_id'],
         $validated['destination_warehouse_id']
       );
@@ -60,7 +59,7 @@ class InventoryTransferService
         'product_id' => $validated['product_id'],
         'quantity'   => $validated['quantity'],
         'date'       => $validated['date'] ?? now(),
-        'created_by' => Auth::id(),
+        'created_by' => auth()->id(),
         'notes'      => $validated['notes'] ?? null,
       ];
 
