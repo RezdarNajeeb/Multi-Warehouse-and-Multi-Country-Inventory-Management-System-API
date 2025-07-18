@@ -25,7 +25,7 @@ class InventoryTransferController extends Controller
 
     /**
      * @OA\Post(
-     *     path="/inventory-transfer",
+     *     path="/api/inventory-transfer",
      *     summary="Transfer inventory between warehouses",
      *     tags={"Inventory Transfer"},
      *     security={{"bearerAuth":{}}},
@@ -41,14 +41,8 @@ class InventoryTransferController extends Controller
      *              @OA\Property(property="message", type="string", example="Transfer successful")
      *         )
      *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
+     *     @OA\Response(response=422, ref="#/components/responses/Unprocessable Content"),
+     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
      * )
      */
     public function __invoke(InventoryTransferRequest $request): JsonResponse

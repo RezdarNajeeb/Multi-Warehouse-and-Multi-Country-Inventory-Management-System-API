@@ -11,7 +11,7 @@ use App\Http\Resources\LowStockReportResource;
 /**
  * @OA\Tag(
  *     name="Low Stock Report",
- *     description="Low stock report for all products"
+ *     description="Report for low stock products"
  * )
  */
 class LowStockReportController extends Controller
@@ -21,7 +21,7 @@ class LowStockReportController extends Controller
     /**
      * @OA\Get(
      *     path="/reports/low-stock",
-     *     summary="Daily low stock report",
+     *     summary="Retrieve low stock report",
      *     tags={"Low Stock Report"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
@@ -39,7 +39,8 @@ class LowStockReportController extends Controller
         return $this->successResponse(
             LowStockReportResource::collection(
                 $service()
-            )
+            ),
+            'Low stock report retrieved successfully'
         );
     }
 }
