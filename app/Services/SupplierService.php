@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\SupplierRequest;
 use App\Models\Supplier;
 use App\Repositories\SupplierRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
@@ -19,14 +18,14 @@ class SupplierService
     return $this->repository->paginate($perPage);
   }
 
-  public function create(SupplierRequest $request): Supplier
+  public function create(array $validated): Supplier
   {
-    return $this->repository->create($request->validated());
+    return $this->repository->create($validated);
   }
 
-  public function update(SupplierRequest $request, Supplier $supplier): Supplier
+  public function update(array $validated, Supplier $supplier): Supplier
   {
-    return $this->repository->update($supplier, $request->validated());
+    return $this->repository->update($supplier, $validated);
   }
 
   public function delete(Supplier $supplier): void

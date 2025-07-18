@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\WarehouseRequest;
 use App\Models\Warehouse;
 use App\Repositories\WarehouseRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
@@ -19,14 +18,14 @@ class WarehouseService
     return $this->repository->paginate();
   }
 
-  public function create(WarehouseRequest $request): Warehouse
+  public function create(array $validated): Warehouse
   {
-    return $this->repository->create($request->validated());
+    return $this->repository->create($validated);
   }
 
-  public function update(WarehouseRequest $request, Warehouse $warehouse): Warehouse
+  public function update(array $validated, Warehouse $warehouse): Warehouse
   {
-    return $this->repository->update($warehouse, $request->validated());
+    return $this->repository->update($warehouse, $validated);
   }
 
   public function delete(Warehouse $warehouse): void

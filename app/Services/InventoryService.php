@@ -3,11 +3,11 @@
 namespace App\Services;
 
 use App\Events\LowStockDetected;
-use App\Http\Requests\InventoryRequest;
 use App\Models\Inventory;
 use App\Repositories\InventoryRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Arr;
 
 class InventoryService
 {
@@ -21,9 +21,9 @@ class InventoryService
     return $this->repository->paginate();
   }
 
-  public function create(InventoryRequest $request): Inventory
+  public function create(array $validated): Inventory
   {
-    $inventory = $this->repository->create($request->validated());
+    $inventory = $this->repository->create($validated);
 
     $this->dispatchLowStockEvent($inventory);
 
@@ -34,11 +34,11 @@ class InventoryService
    * Update inventory with business constraints.
    * Returns array with [Inventory $model, string $message]
    */
-  public function update(InventoryRequest $request, Inventory $inventory): array
+  public function update(array $validated, Inventory $inventory): array
   {
     $locked = $this->hasStockOrHistory($inventory);
 
-    $data = $locked ? $request->safe()->only(['quantity', 'min_quantity']) : $request->validated();
+    $data = $locked ? Arr::only($validated, ['quantity', 'min_quantity']) : $validated;
 
     $updated = $this->repository->update($inventory, $data);
 

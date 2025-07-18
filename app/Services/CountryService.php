@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\CountryRequest;
 use App\Models\Country;
 use App\Repositories\CountryRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
@@ -19,14 +18,14 @@ class CountryService
         return $this->repository->paginate();
     }
 
-    public function create(CountryRequest $request): Country
+    public function create(array $validated): Country
     {
-        return $this->repository->create($request->validated());
+        return $this->repository->create($validated);
     }
 
-    public function update(CountryRequest $request, Country $country): Country
+    public function update(array $validated, Country $country): Country
     {
-        return $this->repository->update($country, $request->validated());
+        return $this->repository->update($country, $validated);
     }
 
     public function delete(Country $country): void

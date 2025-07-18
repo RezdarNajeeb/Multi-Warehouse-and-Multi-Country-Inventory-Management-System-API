@@ -72,7 +72,7 @@ class InventoryTransactionController extends Controller
      */
     public function store(InventoryTransactionRequest $request): JsonResponse
     {
-        [$data, $error, $status] = $this->service->record($request);
+        [$data, $error, $status] = $this->service->record($request->validated());
 
         if ($error) {
             return $this->errorResponse($error, $status);

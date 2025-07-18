@@ -79,7 +79,7 @@ class InventoryController extends Controller
     public function store(InventoryRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new InventoryResource($this->inventoryService->create($request))
+            new InventoryResource($this->inventoryService->create($request->validated()))
         );
     }
 
@@ -141,7 +141,7 @@ class InventoryController extends Controller
     public function update(InventoryRequest $request, Inventory $inventory): JsonResponse
     {
         return $this->successResponse(
-            new InventoryResource($this->inventoryService->update($request, $inventory)),
+            new InventoryResource($this->inventoryService->update($request->validated(), $inventory)),
             'Inventory updated successfully'
         );
     }

@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
@@ -28,7 +29,12 @@ class WarehouseRequest extends FormRequest
         $requiredOrSometimes = $this->routeIs('warehouses.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => $requiredOrSometimes . '|string|max:255',
+            'name' => [
+                $requiredOrSometimes,
+                'string',
+                'max:255',
+                Rule::unique('warehouses')->where('country_id', $this->country_id)
+            ],
             'location' => $requiredOrSometimes . '|string|max:120',
             'country_id' => "$requiredOrSometimes|integer|exists:countries,id",
         ];

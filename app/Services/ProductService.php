@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
@@ -35,14 +34,14 @@ class ProductService
     });
   }
 
-  public function create(ProductRequest $request): Product
+  public function create(array $validated): Product
   {
-    return $this->repository->create($request->validated());
+    return $this->repository->create($validated);
   }
 
-  public function update(ProductRequest $request, Product $product): Product
+  public function update(array $validated, Product $product): Product
   {
-    return $this->repository->update($product, $request->validated());
+    return $this->repository->update($product, $validated);
   }
 
   public function delete(Product $product): void

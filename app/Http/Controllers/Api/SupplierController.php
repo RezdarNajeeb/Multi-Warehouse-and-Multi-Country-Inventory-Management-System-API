@@ -55,7 +55,7 @@ class SupplierController extends Controller
     public function store(SupplierRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new SupplierResource($this->supplierService->create($request))
+            new SupplierResource($this->supplierService->create($request->validated()))
         );
     }
 
@@ -88,7 +88,7 @@ class SupplierController extends Controller
     public function update(SupplierRequest $request, Supplier $supplier): JsonResponse
     {
         return $this->successResponse(
-            new SupplierResource($this->supplierService->update($request, $supplier)),
+            new SupplierResource($this->supplierService->update($request->validated(), $supplier)),
             'Updated successfully'
         );
     }

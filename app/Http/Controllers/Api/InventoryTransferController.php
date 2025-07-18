@@ -53,7 +53,7 @@ class InventoryTransferController extends Controller
      */
     public function __invoke(InventoryTransferRequest $request): JsonResponse
     {
-        [$data, $error, $status] = $this->service->transfer($request);
+        [$data, $error, $status] = $this->service->transfer($request->validated());
 
         if ($error) {
             return $this->errorResponse($error, $status);

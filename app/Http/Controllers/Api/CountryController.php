@@ -66,7 +66,7 @@ class CountryController extends Controller
     public function store(CountryRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new CountryResource($this->countryService->create($request))
+            new CountryResource($this->countryService->create($request->validated()))
         );
     }
 
@@ -122,7 +122,7 @@ class CountryController extends Controller
     public function update(CountryRequest $request, Country $country): JsonResponse
     {
         return $this->successResponse(
-            new CountryResource($this->countryService->update($request, $country)),
+            new CountryResource($this->countryService->update($request->validated(), $country)),
             'Updated successfully'
         );
     }

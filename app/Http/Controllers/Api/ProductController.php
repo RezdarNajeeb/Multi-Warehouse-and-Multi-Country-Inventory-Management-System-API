@@ -63,7 +63,7 @@ class ProductController extends Controller
     public function store(ProductRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new ProductResource($this->productService->create($request))
+            new ProductResource($this->productService->create($request->validated()))
         );
     }
 
@@ -119,7 +119,7 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
         return $this->successResponse(
-            new ProductResource($this->productService->update($request, $product)),
+            new ProductResource($this->productService->update($request->validated(), $product)),
             'Updated successfully'
         );
     }

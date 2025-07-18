@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\InventoryTransactionRequest;
 use App\Http\Resources\InventoryTransactionResource;
 use App\Models\Inventory;
 use App\Repositories\InventoryTransactionRepository;
@@ -23,10 +22,8 @@ class InventoryTransactionService
     return $this->repository->paginate($perPage);
   }
 
-  public function record(InventoryTransactionRequest $request)
+  public function record(array $validated)
   {
-    $validated = $request->validated();
-
     return DB::transaction(function () use ($validated) {
       // lock inventory row
       $inventory = Inventory::where([

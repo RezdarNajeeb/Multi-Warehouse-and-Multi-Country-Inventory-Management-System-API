@@ -55,7 +55,7 @@ class WarehouseController extends Controller
     public function store(WarehouseRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new WarehouseResource($this->warehouseService->create($request))
+            new WarehouseResource($this->warehouseService->create($request->validated()))
         );
     }
 
@@ -88,7 +88,7 @@ class WarehouseController extends Controller
     public function update(WarehouseRequest $request, Warehouse $warehouse): JsonResponse
     {
         return $this->successResponse(
-            new WarehouseResource($this->warehouseService->update($request, $warehouse)),
+            new WarehouseResource($this->warehouseService->update($request->validated(), $warehouse)),
             'Updated successfully'
         );
     }

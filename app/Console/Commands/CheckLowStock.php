@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Jobs\SendLowStockReport;
+
 class CheckLowStock extends Command
 {
     /**
@@ -26,5 +27,6 @@ class CheckLowStock extends Command
     public function handle()
     {
         SendLowStockReport::dispatch();
+        $this->info('Low stock check has been dispatched.');
     }
 }

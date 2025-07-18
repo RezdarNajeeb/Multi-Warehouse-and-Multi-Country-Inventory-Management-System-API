@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Http\Requests\InventoryTransferRequest;
 use App\Http\Resources\InventoryResource;
 use App\Repositories\InventoryRepository;
 use App\Repositories\InventoryTransactionRepository;
@@ -24,10 +23,8 @@ class InventoryTransferService
    *
    * @return array [mixed $data, ?string $error, int $status]
    */
-  public function transfer(InventoryTransferRequest $request): array
+  public function transfer(array $validated): array
   {
-    $validated = $request->validated();
-
     return DB::transaction(function () use ($validated) {
       // lock source inventory
       $sourceInventory = $this->inventories->lockAndGet(

@@ -13,10 +13,10 @@ class AuthService
         //
     }
 
-    public function register(array $data): array
+    public function register(array $validated): array
     {
-        $data['password'] = bcrypt($data['password']);
-        $user = $this->users->create($data);
+        $validated['password'] = bcrypt($validated['password']);
+        $user = $this->users->create($validated);
 
         return [
             'user' => $user,
