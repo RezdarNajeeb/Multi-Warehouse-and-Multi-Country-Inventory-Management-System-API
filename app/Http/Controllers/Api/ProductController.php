@@ -110,9 +110,12 @@ class ProductController extends Controller
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized")
      * )
      */
-    public function show(Product $product): JsonResponse
+    public function show(int $product): JsonResponse
     {
-        return $this->successResponse(new ProductResource($product), 'Product retrieved successfully');
+        return $this->successResponse(
+            new ProductResource($this->productService->find($product)),
+            'Product retrieved successfully'
+        );
     }
 
     /**
