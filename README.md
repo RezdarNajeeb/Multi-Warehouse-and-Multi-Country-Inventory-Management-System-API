@@ -21,14 +21,16 @@ A comprehensive backend API system built with Laravel for managing products acro
 - [Installation](#installation)
 - [Configuration](#configuration)
 - [Database Setup](#database-setup)
+- [Development Server](#development-server)
 - [Authentication](#authentication)
-- [API Endpoints](#api-endpoints)
+- [API Documentation](#api-documentation)
 - [Scheduled Jobs](#scheduled-jobs)
 - [Testing](#testing)
-- [Usage Examples](#usage-examples)
-- [Deployment](#deployment)
+- [Troubleshooting](#troubleshooting)
+- [Additional Resources](#additional-resources)
 - [Contributing](#contributing)
 - [License](#license)
+- [Support](#support)
 
 ## Requirements
 
@@ -121,7 +123,9 @@ PRODUCT_CACHE_TTL=500 # Cache time in minutes
 JWT_SECRET=your_jwt_secret
 ```
 
-### Database Configuration
+## Database Setup
+
+### 1. Create a Database
 
 Create a new database for the project:
 
@@ -129,15 +133,13 @@ Create a new database for the project:
 CREATE DATABASE your_database_name;
 ```
 
-## Database Setup
-
-### 1. Run Migrations
+### 2. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 2. Seed the Database (Optional)
+### 3. Seed the Database (Optional)
 
 ```bash
 php artisan db:seed
@@ -149,7 +151,7 @@ This will create sample data including:
 - Sample products and suppliers
 - Initial inventory data
 
-## 🖥 Development Server
+## Development Server
 Run the following command to start the Laravel development server:
 
 ```bash
@@ -204,7 +206,7 @@ Response:
 }
 ```
 
-## API Endpoints & Documentation
+## API Documentation
 The API endpoints are documented using Swagger. You can access the documentation at:
 
 ```
@@ -297,7 +299,7 @@ php artisan test --filter=ProductTest
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/RezdarNajeeb/Multi-Warehouse-and-Multi-Country-Inventory-Management-System-API?tab=MIT-1-ov-file) file for details.
 
 ## Support
 
