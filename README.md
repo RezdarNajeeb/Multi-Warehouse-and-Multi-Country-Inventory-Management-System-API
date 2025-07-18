@@ -1,139 +1,310 @@
-# Multi-Warehouse & Multi-Country Inventory Management System API
+# Multi-Warehouse & Multi-Country Inventory Management System
 
-This is the backend API for a Multi-Warehouse, Multi-Country Inventory Management System built with Laravel 12.
-
-The system supports managing products, suppliers, and inventory across multiple warehouses located in different countries. It features JWT authentication, role-based access control, and a robust API for all inventory management operations.
+A comprehensive backend API system built with Laravel for managing products across multiple warehouses in different countries. The system provides robust inventory tracking, automated stock monitoring, and seamless inter-warehouse transfers.
 
 ## Features
 
--   **Country Management**: CRUD operations for countries.
--   **Warehouse Management**: CRUD operations for warehouses, linked to countries.
--   **Product Management**: CRUD operations for products.
--   **Supplier Management**: CRUD operations for suppliers.
--   **Inventory Transactions**: Record IN/OUT stock movements per warehouse.
--   **Inventory Transfer**: Transfer products between warehouses, including across countries.
--   **Global Inventory View**: View total stock for each product across all warehouses.
--   **Automated Low-Stock Reporting**: A daily scheduled job identifies products below their minimum quantity and sends an email report.
+- **Multi-Country & Multi-Warehouse Management**: Support for managing inventory across different countries and warehouses
+- **Inventory Tracking**: Track stock levels with automatic updates on transactions
+- **Inter-Warehouse Transfers**: Seamlessly transfer products between warehouses across countries
+- **Automated Low Stock Alerts**: Daily scheduled reports for products reached minimum quantity
+- **Global Inventory View**: Comprehensive overview of stock levels across all warehouses
+- **JWT Authentication**: Secure API access with token-based authentication
+- **Email & Slack Notifications**: Automated alerts for low stock situations
+- **Comprehensive API Documentation**: Auto-generated Swagger documentation
+- **Caching System**: Optimized performance for frequently accessed products by using Redis
+- **Testing Suite**: Unit tests for major functionalities to ensure reliability
+
+## Table of Contents
+
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Database Setup](#database-setup)
+- [Authentication](#authentication)
+- [API Endpoints](#api-endpoints)
+- [Scheduled Jobs](#scheduled-jobs)
+- [Testing](#testing)
+- [Usage Examples](#usage-examples)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Requirements
 
--   PHP 8.2 or higher
--   Composer
--   A database supported by Laravel (MySQL, PostgreSQL, etc.)
+- PHP >= 8.4
+- Composer >= 2.0
+- Laravel >= 11.0
+- MySQL >= 8.0
+- Redis (for caching)
 
-## Getting Started
+## Installation
 
-### 1. Clone the repository
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/your-repository-name.git
-cd your-repository-name
+git clone https://github.com/RezdarNajeeb/Multi-Warehouse-and-Multi-Country-Inventory-Management-System-API.git
+cd Multi-Warehouse-and-Multi-Country-Inventory-Management-System-API
 ```
 
-### 2. Install dependencies
-
-Install the PHP dependencies using Composer.
+### 2. Install Dependencies
 
 ```bash
+# Install PHP dependencies
 composer install
 ```
 
-### 3. Set up the environment
-
-Copy the example environment file and generate your application key.
+### 3. Set Up Environment
 
 ```bash
+# Copy environment file
 cp .env.example .env
+
+# Generate application key
 php artisan key:generate
-```
 
-Next, generate a JWT secret key. This command will add `JWT_SECRET` to your `.env` file.
-
-```bash
+# Generate JWT secret key
 php artisan jwt:secret
 ```
 
-### 4. Configure your `.env` file
+## Configuration
 
-Open the `.env` file and configure your database connection details (`DB_*` variables).
+### Environment Variables
 
-You also need to set a recipient email address for the low-stock report:
+Update your `.env` file with the following configurations:
 
+```env
+# Application
+APP_NAME="Multi-Warehouse & Multi-Country Inventory System"
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost:8000
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_TEST_DATABASE=your_test_database_name
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
+
+# Redis
+REDIS_HOST=127.0.0.1
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
+# Mail Configuration
+MAIL_MAILER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=your_app_password
+MAIL_ENCRYPTION=tls
+MAIL_FROM_ADDRESS=your_email@gmail.com
+MAIL_FROM_NAME="${APP_NAME}"
+
+# Low Stock Report Email
+LOW_STOCK_REPORT_EMAIL=admin@yourcompany.com
+
+# Slack Webhook
+SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
+
+# Cache
+CACHE_STORE=redis
+CACHE_PREFIX=your_cache_prefix
+QUEUE_CONNECTION=redis
+
+PRODUCT_CACHE_TTL=500 # Cache time in minutes
+
+# JWT Configuration
+JWT_SECRET=your_jwt_secret
 ```
-LOW_STOCK_REPORT_EMAIL=your-email@example.com
+
+### Database Configuration
+
+Create a new database for the project:
+
+```sql
+CREATE DATABASE your_database_name;
 ```
 
-### 5. Run database migrations
+## Database Setup
 
-Run the database migrations to create the necessary tables.
+### 1. Run Migrations
 
 ```bash
 php artisan migrate
 ```
 
-### 6. Run the application
+### 2. Seed the Database (Optional)
 
-To start the development server, run:
+```bash
+php artisan db:seed
+```
+
+This will create sample data including:
+- Countries (US, UK, Canada, Germany)
+- Warehouses in different countries
+- Sample products and suppliers
+- Initial inventory data
+
+## 🖥 Development Server
+Run the following command to start the Laravel development server:
 
 ```bash
 php artisan serve
 ```
+This will start the server at `http://localhost:8000`.
 
-The API will be available at `http://127.0.0.1:8000`.
+## Authentication
 
-## API Documentation
+The system uses JWT (JSON Web Tokens) for authentication.
 
-This project uses Swagger for API documentation. Once the application is running, you can view the documentation by navigating to:
-
-[http://127.0.0.1:8000/api/documentation](http://127.0.0.1:8000/api/documentation)
-
-## API Endpoints
-
-All endpoints are prefixed with `/api`. See the Swagger documentation for details on request bodies and responses.
-
--   `POST /register`
--   `POST /login`
--   `DELETE /logout` (Authenticated)
--   `GET|POST|PUT|DELETE /countries` (Authenticated)
--   `GET|POST|PUT|DELETE /warehouses` (Authenticated)
--   `GET|POST|PUT|DELETE /products` (Authenticated)
--   `GET|POST|PUT|DELETE /suppliers` (Authenticated)
--   `GET|POST /inventory-transactions` (Authenticated)
--   `POST /inventory-transfer` (Authenticated)
--   `GET /inventory/global-view` (Authenticated)
--   `GET /reports/low-stock` (Authenticated)
-
-## Generating / Updating Swagger Documentation
-
-This project ships with [L5-Swagger](https://github.com/DarkaOnLine/L5-Swagger). Any time you change controllers, requests, resources, or the consolidated docs found in `app/Swagger/ApiDocumentation.php`, regenerate the JSON that powers Swagger-UI.
+### Register a User
 
 ```bash
-# Generate the latest swagger.json & refresh UI assets
-php artisan l5-swagger:generate
+POST /api/register
+Accept: application/json
+Content-Type: application/json
+
+{
+    "name": "Name Example",
+    "email": "name@example.com",
+    "password": "password123",
+}
+    
+```
+Response:
+```json
+{
+    "message": "User registered successfully."
+}
 ```
 
-You can also simply hit the documentation route in your browser (`/api/documentation`), and L5-Swagger will compile the docs on-the-fly (if `L5_SWAGGER_GENERATE_ALWAYS=true` is set in `.env`).
-
-Common troubleshooting tips:
-
-1. **Missing endpoints** – clear cached JSON (`storage/api-docs`) and regenerate.
-2. **Annotation errors** – run the generator with `-vvv` to get verbose output.
-3. **Auth blocked** – Swagger-UI needs a **Bearer** token for protected routes. Click the green `Authorize` button and paste a valid JWT to make authenticated calls directly from the UI.
-
-## Running the Low-Stock Check Manually
-
-You can trigger the low-stock check manually by running the following Artisan command:
+### Login to Get Token
 
 ```bash
+POST /api/auth/login
+Accept: application/json
+Content-Type: application/json
+
+{
+    "email": "name@example.com",
+    "password": "password123"
+}
+```
+
+Response:
+```json
+{
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "bearer",
+    "expires_in": 3600
+}
+```
+
+## API Endpoints & Documentation
+The API endpoints are documented using Swagger. You can access the documentation at:
+
+```
+http://localhost:8000/api/documentation
+```
+
+## Scheduled Jobs
+
+### Low Stock Report Job
+
+The system automatically runs a daily job at 12:00 AM to check for low stock items.
+
+```bash
+# Run manually
 php artisan inventory:check-low-stock
 ```
+This command scheduled in `bootstrap/app.php` dispatch a job to check for products that have reached their minimum quantity and send notifications via email and Slack.
 
-## Running Tests
+### Queue Workers
 
-To run the feature and unit tests, execute:
+Start queue workers for background jobs:
 
 ```bash
-php artisan test
+php artisan queue:work
 ```
 
-A sample test suite for the Countries API is available at `tests/Feature/CountryControllerTest.php`.
+## Testing
+
+### Test Environment
+
+Ensure you have a separate test database configured in your `.env` file:
+
+```env
+DB_TEST_DATABASE=your_test_database_name
+```
+
+### How to Run Tests
+
+```bash
+# Run all tests
+php artisan test
+
+# Run with coverage
+php artisan test --coverage
+
+# Run specific test class
+php artisan test --filter=ProductTest
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **JWT Token Issues:**
+   ```bash
+   php artisan jwt:secret
+   php artisan config:clear
+   ```
+
+2. **Migration Issues:**
+   ```bash
+   php artisan migrate:fresh --seed
+   ```
+
+3. **Cache Issues:**
+   ```bash
+   php artisan cache:clear
+   php artisan config:clear
+   php artisan route:clear
+   ```
+   
+4. **Redis Connection Issues:**
+   Ensure Redis is running and configured correctly in your `.env` file.
+
+## Additional Resources
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [JWT Auth Documentation](https://jwt-auth.readthedocs.io/)
+- [Swagger Documentation](https://swagger.io/)
+- [Redis Documentation](https://redis.io/documentation)
+- [Pest Documentation](https://pestphp.com/docs/)
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Support
+
+For support and questions:
+- Email: rezdar.00166214@gmail.com
+- Issues: [GitHub Issues](https://github.com/RezdarNajeeb/Multi-Warehouse-and-Multi-Country-Inventory-Management-System-API/issues)
+
+---
+
+**Built with ❤️ using Laravel Framework**
