@@ -12,7 +12,7 @@ use App\Models\InventoryTransaction;
 
 /**
  * @OA\Tag(
- *     name="Transactions",
+ *     name="Inventory Transactions",
  *     description="Inventory IN / OUT Transactions"
  * )
  */
@@ -27,29 +27,36 @@ class InventoryTransactionController extends Controller
 
     /**
      * @OA\Get(
-     *     path="/inventory-transactions",
-     *     summary="List all inventory transactions",
-     *     tags={"Transactions"},
+     *     path="/api/inventory-transactions",
+     *     summary="List of paginated inventory transactions",
+     *     tags={"Inventory Transactions"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
-     *         response=200,
-     *         description="List of transactions",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/InventoryTransactionResource"))
-     *     )
+     *          response=200,
+     *          description="OK",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="message", type="string", example="Inventory transactions retrieved successfully"),
+     *              @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/InventoryTransactionResource")),
+     *              @OA\Property(property="meta", type="object", ref="#/components/schemas/PaginationMeta"),
+     *          )
+     *      ),
+     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
      * )
      */
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            InventoryTransactionResource::collection($this->service->list())
+            InventoryTransactionResource::collection($this->service->list()),
+            'Inventory transactions retrieved successfully'
         );
     }
 
     /**
      * @OA\Post(
-     *     path="/inventory-transactions",
+     *     path="/api/inventory-transactions",
      *     summary="Record a new inventory transaction",
-     *     tags={"Transactions"},
+     *     tags={"Inventory Transactions"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
@@ -60,14 +67,9 @@ class InventoryTransactionController extends Controller
      *         description="Transaction successfully recorded",
      *         @OA\JsonContent(ref="#/components/schemas/InventoryTransactionResource")
      *     ),
-     *     @OA\Response(
-     *         response=422,
-     *         description="Validation error",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string"),
-     *             @OA\Property(property="errors", type="object")
-     *         )
-     *     )
+     *     @OA\Response(response=422, ref="#/components/responses/Unprocessable Content"),
+     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
+     *
      * )
      */
     public function store(InventoryTransactionRequest $request): JsonResponse
@@ -78,14 +80,14 @@ class InventoryTransactionController extends Controller
             return $this->errorResponse($error, $status);
         }
 
-        return $this->createdResponse(new InventoryTransactionResource($data));
+        return $this->createdResponse(new InventoryTransactionResource($data), 'Inventory transaction successfully recorded');
     }
 
     /**
      * @OA\Get(
-     *     path="/inventory-transactions/{inventory_transaction}",
+     *     path="/api/inventory-transactions/{inventory_transaction}",
      *     summary="Get a specific inventory transaction",
-     *     tags={"Transactions"},
+     *     tags={"Inventory Transactions"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Parameter(
      *         name="inventory_transaction",
@@ -99,16 +101,15 @@ class InventoryTransactionController extends Controller
      *         description="Transaction details",
      *         @OA\JsonContent(ref="#/components/schemas/InventoryTransactionResource")
      *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Transaction not found"
-     *     )
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found"),
+     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
      * )
      */
     public function show(InventoryTransaction $inventoryTransaction): JsonResponse
     {
         return $this->successResponse(
-            new InventoryTransactionResource($inventoryTransaction)
+            new InventoryTransactionResource($inventoryTransaction),
+            'Inventory transaction retrieved successfully'
         );
     }
 }

@@ -110,13 +110,7 @@ class CountryController extends Controller
      *             @OA\Property(property="data", ref="#/components/schemas/CountryResource"),
      *        )
      *     ),
-     *
-     *     @OA\Response(response=404, description="Country not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Country not found")
-     *         )
-     *     ),
-     *
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found"),
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized")
      * )
      */
@@ -153,14 +147,8 @@ class CountryController extends Controller
      *     ),
      *
      *     @OA\Response(response=422, ref="#/components/responses/Unprocessable Content"),
-     *
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
-     *
-     *     @OA\Response(response=404, description="Country not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Country not found")
-     *         )
-     *     ),
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found"),
      * )
      */
     public function update(CountryRequest $request, Country $country): JsonResponse
@@ -188,11 +176,7 @@ class CountryController extends Controller
      *         response=204,
      *         description="Deleted successfully"
      *     ),
-     *     @OA\Response(response=404, description="Country not found",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Country not found")
-     *        )
-     *    ),
+     *    @OA\Response(response=404, ref="#/components/responses/Not Found"),
      *    @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
      * )
      */

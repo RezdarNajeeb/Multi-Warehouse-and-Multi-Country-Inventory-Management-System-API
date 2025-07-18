@@ -108,9 +108,7 @@ class InventoryController extends Controller
      *             @OA\Property(property="data", ref="#/components/schemas/InventoryResource"),
      *         )
      *     ),
-     *     @OA\Response(response=404, description="Inventory not found",
-     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Inventory not found"))
-     *     ),
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found"),
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized")
      * )
      */
@@ -150,9 +148,7 @@ class InventoryController extends Controller
      *     ),
      *     @OA\Response(response=422, ref="#/components/responses/Unprocessable Content"),
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
-     *     @OA\Response(response=404, description="Inventory not found",
-     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Inventory not found"))
-     *     )
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found")
      * )
      */
     public function update(InventoryRequest $request, Inventory $inventory): JsonResponse
@@ -178,9 +174,7 @@ class InventoryController extends Controller
      *     ),
      *     @OA\Response(response=204, description="Deleted successfully"),
      *     @OA\Response(response=401, ref="#/components/responses/Unauthorized"),
-     *     @OA\Response(response=404, description="Inventory not found",
-     *         @OA\JsonContent(@OA\Property(property="message", type="string", example="Inventory not found"))
-     *     )
+     *     @OA\Response(response=404, ref="#/components/responses/Not Found")
      * )
      */
     public function destroy(Inventory $inventory): Response|JsonResponse

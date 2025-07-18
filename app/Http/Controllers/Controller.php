@@ -49,6 +49,12 @@ namespace App\Http\Controllers;
  *           )
  *       )
  *
+ * @OA\Response(response="Not Found", description="Resource not found",
+ *     @OA\JsonContent(
+ *         @OA\Property(property="message", type="string", example="Resource not found")
+ *     )
+ * ),
+ *
  * @OA\Schema(
  *     schema="PaginationMeta",
  *     description="Pagination metadata",

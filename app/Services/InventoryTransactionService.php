@@ -44,6 +44,7 @@ class InventoryTransactionService
         event(new LowStockDetected(collect([$inventory])));
       }
 
+      $validated['date'] = $validated['date'] ?? now();
       $validated['created_by'] = auth()->id();
       $transaction = $this->repository->create($validated);
 
