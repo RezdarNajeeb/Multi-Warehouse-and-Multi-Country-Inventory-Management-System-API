@@ -10,8 +10,8 @@ class WarehouseFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'location' => fake()->word(),
+            'name' => fake()->company(),
+            'location' => fake()->address(),
             'country_id' => Country::factory(),
         ];
     }

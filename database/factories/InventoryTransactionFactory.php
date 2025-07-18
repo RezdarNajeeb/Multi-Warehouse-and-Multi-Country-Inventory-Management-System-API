@@ -14,15 +14,30 @@ class InventoryTransactionFactory extends Factory
     public function definition(): array
     {
         return [
-            'quantity' => fake()->numberBetween(1, 100),
-            'transaction_type' => fake()->randomElement(['IN', 'OUT']),
-            'date' => fake()->dateTimeBetween('-1 year'), // random date between now and 1 year ago
-            'notes' => fake()->optional()->sentence(),
-
             'product_id' => Product::factory(),
             'warehouse_id' => Warehouse::factory(),
             'supplier_id' => Supplier::factory(),
+            'quantity' => fake()->numberBetween(1, 100),
+            'transaction_type' => fake()->randomElement(['IN', 'OUT']),
+            'date' => fake()->dateTimeThisMonth(),
+            'notes' => fake()->optional()->sentence(),
             'created_by' => User::factory(),
         ];
+    }
+
+    public function inTransaction(): static
+    {
+        return $this->state(fn() => [
+            'transaction_type' => 'IN',
+            'quantity' => $this->faker->numberBetween(10, 100),
+        ]);
+    }
+
+    public function outTransaction(): static
+    {
+        return $this->state(fn() => [
+            'transaction_type' => 'OUT',
+            'quantity' => $this->faker->numberBetween(1, 50),
+        ]);
     }
 }

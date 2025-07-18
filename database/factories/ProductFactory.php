@@ -12,10 +12,10 @@ class ProductFactory extends Factory
         return [
             'supplier_id' => Supplier::factory(),
             'name' => fake()->name(),
-            'sku' => fake()->word(),
+            'sku' => fake()->unique()->bothify('SKU-####-???'),
             'status' => fake()->boolean(),
-            'description' => fake()->text(),
-            'price' => fake()->randomFloat(2, 1, 1000),
+            'description' => fake()->paragraph(),
+            'price' => fake()->randomFloat(2, 10, 1000), // 10.00 - 1000.00
         ];
     }
 }

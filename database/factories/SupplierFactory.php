@@ -11,9 +11,9 @@ class SupplierFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->company(),
             'contact_info' => [
-                'email' => fake()->safeEmail(),
+                'email' => fake()->companyEmail(),
                 'phone' => fake()->phoneNumber(),
             ],
             'address' => fake()->address(),
