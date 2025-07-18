@@ -10,8 +10,8 @@ use App\Traits\ApiResponse;
 
 /**
  * @OA\Tag(
- *     name="Transfers",
- *     description="Inter-Warehouse Transfers"
+ *     name="Inventory Transfer",
+ *     description="Inventory transferring between warehouses"
  * )
  */
 class InventoryTransferController extends Controller
@@ -27,7 +27,7 @@ class InventoryTransferController extends Controller
      * @OA\Post(
      *     path="/inventory-transfer",
      *     summary="Transfer inventory between warehouses",
-     *     tags={"Transfers"},
+     *     tags={"Inventory Transfer"},
      *     security={{"bearerAuth":{}}},
      *     @OA\RequestBody(
      *         required=true,
