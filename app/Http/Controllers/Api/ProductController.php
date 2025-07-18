@@ -12,7 +12,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
 /**
- * @OA\Tag(name="Products", description="Product CRUD Endpoints")
+ * @OA\Tag(name="Products", description="Product Management")
  */
 class ProductController extends Controller
 {

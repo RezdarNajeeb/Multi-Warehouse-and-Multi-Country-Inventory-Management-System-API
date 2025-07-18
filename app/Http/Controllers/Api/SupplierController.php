@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 /**
  * @OA\Tag(
  *     name="Suppliers",
- *     description="Supplier CRUD Endpoints"
+ *     description="Supplier Management"
  * )
  */
 class SupplierController extends Controller

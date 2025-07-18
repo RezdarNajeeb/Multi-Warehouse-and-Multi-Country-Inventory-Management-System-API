@@ -14,7 +14,7 @@ use Illuminate\Http\Response;
 /**
  * @OA\Tag(
  *     name="Warehouses",
- *     description="Warehouse CRUD Endpoints"
+ *     description="Warehouse Management"
  * )
  */
 class WarehouseController extends Controller

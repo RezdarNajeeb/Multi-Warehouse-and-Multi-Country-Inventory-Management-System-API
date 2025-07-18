@@ -10,8 +10,8 @@ use App\Http\Resources\LowStockReportResource;
 
 /**
  * @OA\Tag(
- *     name="Reports",
- *     description="Reporting Endpoints"
+ *     name="Low Stock Report",
+ *     description="Low stock report for all products"
  * )
  */
 class LowStockReportController extends Controller
@@ -22,7 +22,7 @@ class LowStockReportController extends Controller
      * @OA\Get(
      *     path="/reports/low-stock",
      *     summary="Daily low stock report",
-     *     tags={"Reports"},
+     *     tags={"Low Stock Report"},
      *     security={{"bearerAuth":{}}},
      *     @OA\Response(
      *         response=200,
