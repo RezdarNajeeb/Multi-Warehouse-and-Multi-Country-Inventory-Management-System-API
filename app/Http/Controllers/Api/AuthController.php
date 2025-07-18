@@ -8,6 +8,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 
 /**
  * @OA\Tag(name="Auth", description="Authentication Endpoints")
@@ -23,21 +24,25 @@ class AuthController extends Controller
 
     /**
      * @OA\Post(
-     *      path="/register",
+     *      path="/api/register",
      *      tags={"Auth"},
-     *      summary="Register a new user",
+     *      summary="Register a new user and retrieve a JWT token",
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
      *      ),
-     *      @OA\Response(response=201, description="User registered", @OA\JsonContent(type=object)),
-     *      @OA\Response(response=422, description="Validation error",
+     *      @OA\Response(response=201, description="User registered",
      *          @OA\JsonContent(
      *              type="object",
-     *              @OA\Property(property="message", type="string", example="The given data was invalid."),
-     *              @OA\Property(property="errors", type="object")
+     *              @OA\Property(property="message", type="string", example="User registered successfully"),
+     *              @OA\Property(property="data", type="object",
+     *                  @OA\Property(property="user", ref="#/components/schemas/UserResource"),
+     *                  @OA\Property(property="token", type="string", example="jwt.token.here")
+     *              )
      *          )
-     *      )
+     *      ),
+     *
+     *      @OA\Response(response=422, ref="#/components/responses/Unprocessable Content"),
      * )
      */
     public function register(RegisterRequest $request): JsonResponse
@@ -49,43 +54,37 @@ class AuthController extends Controller
 
     /**
      * @OA\Delete(
-     *      path="/logout",
+     *      path="/api/logout",
      *      tags={"Auth"},
      *      summary="Logout the authenticated user",
      *      security={{"bearerAuth":{}}},
-     *      @OA\Response(response=200, description="Logged out",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="message", type="string", example="Successfully logged out"),
-     *              @OA\Property(property="data", type="object", nullable=true, example=null)
-     *          )
-     *      ),
-     *      @OA\Response(response=401, description="Unauthenticated",
-     *          @OA\JsonContent(
-     *              type="object",
-     *              @OA\Property(property="message", type="string", example="Unauthenticated.")
-     *          )
-     *      )
+     *      @OA\Response(response=204, description="Logged out"),
+     *      @OA\Response(response="401", ref="#/components/responses/Unauthorized")
      * )
      */
-    public function logout(): JsonResponse
+    public function logout(): Response
     {
         $this->authService->logout();
 
-        return $this->successResponse(null, "Successfully logged out");
+        return $this->deletedResponse();
     }
 
     /**
      * @OA\Post(
-     *      path="/login",
+     *      path="/api/login",
      *      tags={"Auth"},
      *      summary="Login and retrieve JWT token",
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(ref="#/components/schemas/LoginRequest")
      *      ),
-     *      @OA\Response(response=200, description="Successful login", @OA\JsonContent(ref="#/components/schemas/LoginResource")),
-     *      @OA\Response(response=401, description="Invalid credentials",
+     *      @OA\Response(response=200, description="Successful login",
+     *          @OA\JsonContent(
+     *              type="object",
+     *              @OA\Property(property="token", type="string", example="jwt.token.here")
+     *          )
+     *      ),
+     *      @OA\Response(response=422, description="Invalid credentials",
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(property="message", type="string", example="Invalid credentials")
@@ -98,7 +97,7 @@ class AuthController extends Controller
         $token = $this->authService->login($request->validated());
 
         if (!$token) {
-            return $this->errorResponse('Invalid credentials', 401);
+            return $this->errorResponse('Invalid credentials', 422);
         }
 
         return $this->successResponse(['token' => $token]);

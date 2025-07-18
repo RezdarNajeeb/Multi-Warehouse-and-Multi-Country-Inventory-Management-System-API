@@ -11,8 +11,8 @@ use Illuminate\Foundation\Http\FormRequest;
  *     description="Register request body data",
  *     type="object",
  *     required={"name", "email", "password"},
- *     @OA\Property(property="name", type="string", example="John Doe"),
- *     @OA\Property(property="email", type="string", format="email", example="john.doe@example.com"),
+ *     @OA\Property(property="name", type="string", example="Rezdar"),
+ *     @OA\Property(property="email", type="string", format="email", example="rezdar@gmail.com"),
  *     @OA\Property(property="password", type="string", format="password", example="password123")
  * )
  */
