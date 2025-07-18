@@ -15,7 +15,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *      @OA\Property(property="source_warehouse_id", type="integer", example=1),
  *      @OA\Property(property="destination_warehouse_id", type="integer", example=2),
  *      @OA\Property(property="quantity", type="integer", example=25),
- *      @OA\Property(property="date", type="string", format="date", nullable=true, example="2024-07-05"),
+ *      @OA\Property(property="date", type="string", format="date", nullable=true, example="2025-07-01 00:00:00"),
  *      @OA\Property(property="notes", type="string", nullable=true, example="Rebalancing stock levels")
  * )
  */
@@ -41,8 +41,8 @@ class InventoryTransferRequest extends FormRequest
             'source_warehouse_id' => 'required|integer|exists:warehouses,id',
             'destination_warehouse_id' => 'required|integer|exists:warehouses,id|different:source_warehouse_id',
             'quantity' => 'required|integer|min:1',
-            'date' => 'nullable|date|after_or_equal:today',
-            'notes' => 'nullable|string',
+            'date' => 'nullable|date|before_or_equal:now',
+            'notes' => 'nullable|string|max:65535',
         ];
     }
 }

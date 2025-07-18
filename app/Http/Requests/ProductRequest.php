@@ -32,7 +32,7 @@ class ProductRequest extends FormRequest
 
         return [
             'name' => "{$requiredOrSometimes}|string|max:255",
-            'sku' => "{$requiredOrSometimes}|string|max:60|unique:products,sku" .
+            'sku' => "{$requiredOrSometimes}|string|max:50|unique:products,sku" .
                 ($isStore ? '' : ",{$this->route('product')?->id}"),
             'status' => 'sometimes|boolean',
             'description' => 'sometimes|string|max:65535',

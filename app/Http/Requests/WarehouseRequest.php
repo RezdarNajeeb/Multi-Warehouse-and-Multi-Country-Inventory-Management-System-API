@@ -32,10 +32,10 @@ class WarehouseRequest extends FormRequest
             'name' => [
                 $requiredOrSometimes,
                 'string',
-                'max:255',
+                'max:50',
                 Rule::unique('warehouses')->where('country_id', $this->country_id)
             ],
-            'location' => $requiredOrSometimes . '|string|max:120',
+            'location' => $requiredOrSometimes . '|string|max:65535',
             'country_id' => "$requiredOrSometimes|integer|exists:countries,id",
         ];
     }

@@ -20,7 +20,7 @@ use Illuminate\Http\Resources\MergeValue;
  *     @OA\Property(property="supplier_id", type="integer", nullable=true, example=3),
  *     @OA\Property(property="quantity", type="integer", example=50),
  *     @OA\Property(property="transaction_type", type="enum(in,out)", example="in"),
- *     @OA\Property(property="date", type="string", format="date", example="2025-07-01"),
+ *     @OA\Property(property="date", type="string", format="date", example="2025-07-01 00:00:00"),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
  *     @OA\Property(property="updated_at", type="string", format="date-time"),
  *     @OA\Property(property="created_by", type="integer", example=1),

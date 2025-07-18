@@ -16,7 +16,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *      @OA\Property(property="supplier_id", type="integer", nullable=true, example=3),
  *      @OA\Property(property="quantity", type="integer", example=50),
  *      @OA\Property(property="transaction_type", type="enum(in,out)", example="in"),
- *      @OA\Property(property="date", type="string", format="date", example="2025-07-01"),
+ *      @OA\Property(property="date", type="string", format="date", example="2025-07-01 00:00:00"),
  *      @OA\Property(property="notes", type="string", nullable=true, example="Initial stock")
  * )
  */
@@ -36,7 +36,7 @@ class InventoryTransactionRequest extends FormRequest
             'quantity' => "required|integer|min:1",
             'transaction_type' => "required|in:in,out",
             'date' => "nullable|date|before_or_equal:now",
-            'notes' => 'nullable|string|max:500',
+            'notes' => 'nullable|string|max:65535',
         ];
     }
 }

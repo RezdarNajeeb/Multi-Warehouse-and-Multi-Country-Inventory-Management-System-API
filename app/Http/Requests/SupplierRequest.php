@@ -28,7 +28,7 @@ class SupplierRequest extends FormRequest
         $requiredOrSometimes = $this->routeIs('suppliers.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => "{$requiredOrSometimes}|string|max:255",
+            'name' => "{$requiredOrSometimes}|string|max:100",
             'contact_info' => "{$requiredOrSometimes}|array",
             'address' => "{$requiredOrSometimes}|string|max:255",
         ];
