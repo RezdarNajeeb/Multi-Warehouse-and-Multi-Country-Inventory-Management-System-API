@@ -30,16 +30,18 @@ class InventoryRequest extends FormRequest
         $requiredOrSometimes = $this->routeIs('inventories.store') ? 'required' : 'sometimes';
 
         return [
-            'product_id'    => [
-                $requiredOrSometimes,
-                'exists:products,id',
-                Rule::unique('inventories')
-                    ->where('warehouse_id', $this->input('warehouse_id'))
-                    ->ignore($this->inventory?->id),
-            ],
-            'warehouse_id'  => [$requiredOrSometimes, 'exists:warehouses,id'],
-            'quantity'      => [$requiredOrSometimes, 'integer', 'min:0'],
-            'min_quantity'  => [$requiredOrSometimes, 'integer', 'min:0'],
+            'product_id' => "$requiredOrSometimes|integer|exists:products,id",
+            'warehouse_id' => "$requiredOrSometimes|integer|exists:warehouses,id",
+            'quantity' => [$requiredOrSometimes, 'integer', 'min:0'],
+            'min_quantity' => [$requiredOrSometimes, 'integer', 'min:0'],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'product_id.exists' => 'The selected product does not exist.',
+            'warehouse_id.exists' => 'The selected warehouse does not exist.',
         ];
     }
 }
