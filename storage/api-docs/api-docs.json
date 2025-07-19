@@ -2026,11 +2026,16 @@
                 "title": "Product Request",
                 "description": "Product request body data",
                 "required": [
+                    "supplier_id",
                     "name",
                     "sku",
                     "price"
                 ],
                 "properties": {
+                    "supplier_id": {
+                        "type": "integer",
+                        "example": 1
+                    },
                     "name": {
                         "type": "string",
                         "maxLength": 255,
@@ -2336,6 +2341,9 @@
                     "updated_at": {
                         "type": "string",
                         "format": "date-time"
+                    },
+                    "supplier": {
+                        "$ref": "#/components/schemas/SupplierResource"
                     }
                 },
                 "type": "object"
