@@ -18,7 +18,7 @@ class InventoryService
 
   public function list(int $perPage = 10, string $relations = ''): CursorPaginator
   {
-    return $this->inventories->paginate($perPage, explode(',', $relations));
+    return $this->inventories->paginate($perPage, $relations ? explode(',', $relations) : []);
   }
 
   public function create(array $validated): Inventory

@@ -39,24 +39,28 @@ class InventoryTransactionResource extends JsonResource
             'quantity' => $this->quantity,
             'transaction_type' => $this->transaction_type,
             'date' => $this->date,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
 
             'created_by' => $this->created_by,
 
-            'notes' => $this->when($this->notes, fn() => $this->notes),
+            $this->mergeWhen(request()->routeIs('inventory-transactions.show'), [
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+                'notes' => $this->when($this->notes, fn() => $this->notes),
+            ]),
 
-            'relations' => $this->when(
+            $this->mergeWhen(
                 $this->relationLoaded('product') ||
-                    $this->relationLoaded('warehouse') ||
-                    $this->relationLoaded('supplier') ||
-                    $this->relationLoaded('createdBy'),
-                fn() => new MergeValue([
-                    'product'    => $this->whenLoaded('product', fn() => new ProductResource($this->product)),
-                    'warehouse'  => $this->whenLoaded('warehouse', fn() => new WarehouseResource($this->warehouse)),
-                    'supplier'   => $this->whenLoaded('supplier', fn() => new SupplierResource($this->supplier)),
-                    'createdBy'  => $this->whenLoaded('createdBy', fn() => new UserResource($this->createdBy)),
-                ])
+                $this->relationLoaded('warehouse') ||
+                $this->relationLoaded('supplier') ||
+                $this->relationLoaded('createdBy'),
+                fn() => [
+                    'relations' => [
+                        'product' => $this->whenLoaded('product', fn() => new ProductResource($this->product)),
+                        'warehouse' => $this->whenLoaded('warehouse', fn() => new WarehouseResource($this->warehouse)),
+                        'supplier' => $this->whenLoaded('supplier', fn() => new SupplierResource($this->supplier)),
+                        'createdBy' => $this->whenLoaded('createdBy', fn() => new UserResource($this->createdBy)),
+                    ]
+                ]
             )
         ];
     }

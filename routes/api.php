@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CountryController;
+use App\Http\Controllers\Api\GlobalStockController;
 use App\Http\Controllers\Api\InventoryController;
 use App\Http\Controllers\Api\InventoryTransactionController;
 use App\Http\Controllers\Api\InventoryTransferController;
@@ -24,6 +25,6 @@ Route::middleware('auth:api')->group(function () {
     Route::apiResource('/inventory-transactions', InventoryTransactionController::class)
         ->except(['update', 'delete']);
     Route::post('/inventory-transfer', InventoryTransferController::class);
-    Route::get('/inventory/global-view', [InventoryController::class, 'getGlobalView']);
+    Route::get('/inventory/global-view', GlobalStockController::class);
     Route::get('/reports/low-stock', LowStockReportController::class);
 });

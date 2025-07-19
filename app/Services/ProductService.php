@@ -22,7 +22,7 @@ class ProductService
         // Cache paginated product lists for 5 minutes to boost read performance
         return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'),
             function () use ($perPage, $relations) {
-                return $this->products->paginate($perPage, explode(',', $relations));
+                return $this->products->paginate($perPage, $relations ? explode(',', $relations) : []);
             });
     }
 
@@ -32,7 +32,7 @@ class ProductService
 
         return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'),
             function () use ($productId, $relations) {
-                return $this->products->find($productId, explode(',', $relations));
+                return $this->products->find($productId, $relations ? explode(',', $relations) : []);
             });
     }
 

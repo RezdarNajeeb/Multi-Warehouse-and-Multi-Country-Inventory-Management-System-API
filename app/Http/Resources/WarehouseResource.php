@@ -31,17 +31,18 @@ class WarehouseResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'         => $this->id,
-            'country_id'  => $this->country_id,
-            'name'       => $this->name,
-            'location'   => $this->location,
-            'created_at'  => $this->created_at,
-            'updated_at'  => $this->updated_at,
+            'id' => $this->id,
+            'country_id' => $this->country_id,
+            'name' => $this->name,
+            'location' => $this->location,
+
+            $this->mergeWhen(request()->routeIs('countries.show'), [
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ]),
 
             // only show when country relation is loaded
-            'relations' => $this->whenLoaded('country', function () {
-                return ['country' => new CountryResource($this->country)];
-            }),
+            'country' => $this->whenLoaded('country', fn() => new CountryResource($this->country)),
         ];
     }
 }

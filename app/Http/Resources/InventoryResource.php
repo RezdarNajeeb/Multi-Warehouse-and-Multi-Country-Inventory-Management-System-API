@@ -39,8 +39,11 @@ class InventoryResource extends JsonResource
             'warehouse_id' => $this->warehouse_id,
             'quantity' => $this->quantity,
             'min_quantity' => $this->min_quantity,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+
+            $this->mergeWhen(request()->routeIs('inventories.show'), [
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ]),
 
             'relations' => $this->when(
                 $this->relationLoaded('product') ||

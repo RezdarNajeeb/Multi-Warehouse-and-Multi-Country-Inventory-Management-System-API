@@ -32,10 +32,15 @@ class ProductResource extends JsonResource
             'name' => $this->name,
             'sku' => $this->sku,
             'status' => $this->status,
-            'description' => $this->description,
             'price' => $this->price,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+
+            $this->mergeWhen(request()->routeIs('products.show'), [
+                'description' => $this->description,
+                'created_at' => $this->created_at,
+                'updated_at' => $this->updated_at,
+            ]),
+
+            'supplier' => $this->whenLoaded('supplier', fn() => new SupplierResource($this->supplier)),
         ];
     }
 }

@@ -22,7 +22,7 @@ class InventoryTransactionService
 
     public function list(int $perPage = 10, string $relations = ''): CursorPaginator
     {
-        return $this->inventoryTransactions->paginate($perPage, explode(',', $relations));
+        return $this->inventoryTransactions->paginate($perPage, $relations ? explode(',', $relations) : []);
     }
 
     public function record(array $validated)
