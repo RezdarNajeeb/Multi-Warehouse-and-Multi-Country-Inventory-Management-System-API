@@ -49,7 +49,11 @@ class CountryController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            CountryResource::collection($this->countryService->list()),
+            CountryResource::collection(
+                $this->countryService->list(
+                    request('perPage', 10)
+                )
+            ),
             'Countries retrieved successfully'
         );
     }
@@ -82,7 +86,11 @@ class CountryController extends Controller
     public function store(CountryRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new CountryResource($this->countryService->create($request->validated())),
+            new CountryResource(
+                $this->countryService->create(
+                    $request->validated()
+                )
+            ),
             'Country created successfully'
         );
     }
@@ -116,7 +124,9 @@ class CountryController extends Controller
      */
     public function show(Country $country): JsonResponse
     {
-        return $this->successResponse(new CountryResource($country), 'Country retrieved successfully');
+        return $this->successResponse(
+            new CountryResource($country),
+            'Country retrieved successfully');
     }
 
     /**
@@ -154,7 +164,11 @@ class CountryController extends Controller
     public function update(CountryRequest $request, Country $country): JsonResponse
     {
         return $this->successResponse(
-            new CountryResource($this->countryService->update($request->validated(), $country)),
+            new CountryResource(
+                $this->countryService->update(
+                    $request->validated(), $country
+                )
+            ),
             'Country updated successfully'
         );
     }

@@ -7,7 +7,7 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class CountryRepository
 {
-    public function paginate(int $perPage = 10): CursorPaginator
+    public function paginate(int $perPage): CursorPaginator
     {
         return Country::orderBy('id')->cursorPaginate($perPage);
     }

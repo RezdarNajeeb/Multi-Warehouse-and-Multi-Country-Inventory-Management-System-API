@@ -8,28 +8,28 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class CountryService
 {
-    public function __construct(protected CountryRepository $repository)
+    public function __construct(protected CountryRepository $countries)
     {
         //
     }
 
-    public function list(): CursorPaginator
+    public function list(int $perPage = 10): CursorPaginator
     {
-        return $this->repository->paginate();
+        return $this->countries->paginate($perPage);
     }
 
     public function create(array $validated): Country
     {
-        return $this->repository->create($validated);
+        return $this->countries->create($validated);
     }
 
     public function update(array $validated, Country $country): Country
     {
-        return $this->repository->update($country, $validated);
+        return $this->countries->update($country, $validated);
     }
 
     public function delete(Country $country): void
     {
-        $this->repository->delete($country);
+        $this->countries->delete($country);
     }
 }
