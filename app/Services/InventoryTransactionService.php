@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Http\Resources\InventoryTransactionResource;
-use App\Models\Inventory;
 use App\Repositories\InventoryRepository;
 use App\Repositories\InventoryTransactionRepository;
 use Illuminate\Contracts\Pagination\CursorPaginator;
