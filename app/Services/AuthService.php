@@ -2,8 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\UserRepository;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthenticationException;
 use JWTAuth;
 
 class AuthService
@@ -13,26 +14,26 @@ class AuthService
         //
     }
 
-    public function register(array $validated): array
+    public function register(array $validated): User
     {
         $validated['password'] = bcrypt($validated['password']);
-        $user = $this->users->create($validated);
+        $validated['email'] = strtolower($validated['email']);
 
-        return [
-            'user' => $user,
-            'token' => JWTAuth::fromUser($user)
-        ];
+        return $this->users->create($validated);
     }
 
     public function logout(): void
     {
-        Auth::logout();
+        auth()->logout();
     }
 
-    public function login(array $credentials): ?string
+    /**
+     * @throws AuthenticationException
+     */
+    public function login(array $credentials): string
     {
         if (!$token = JWTAuth::attempt($credentials)) {
-            return null;
+            throw new AuthenticationException('Invalid credentials');
         }
 
         return $token;

@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\AuthService;
 use App\Traits\ApiResponse;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 
@@ -26,7 +27,7 @@ class AuthController extends Controller
      * @OA\Post(
      *      path="/api/register",
      *      tags={"Auth"},
-     *      summary="Register a new user and retrieve a JWT token",
+     *      summary="Register for a new account",
      *      @OA\RequestBody(
      *          required=true,
      *          @OA\JsonContent(ref="#/components/schemas/RegisterRequest")
@@ -35,10 +36,7 @@ class AuthController extends Controller
      *          @OA\JsonContent(
      *              type="object",
      *              @OA\Property(property="message", type="string", example="User registered successfully"),
-     *              @OA\Property(property="data", type="object",
-     *                  @OA\Property(property="user", ref="#/components/schemas/UserResource"),
-     *                  @OA\Property(property="token", type="string", example="jwt.token.here")
-     *              )
+     *              @OA\Property(property="user", ref="#/components/schemas/UserResource"),
      *          )
      *      ),
      *
@@ -91,15 +89,15 @@ class AuthController extends Controller
      *          )
      *      )
      * )
+     *
+     * @throws AuthenticationException
      */
     public function login(LoginRequest $request): JsonResponse
     {
         $token = $this->authService->login($request->validated());
 
-        if (!$token) {
-            return $this->errorResponse('Invalid credentials', 422);
-        }
-
-        return $this->successResponse(['token' => $token]);
+        return $this->successResponse([
+            'token' => $token
+        ]);
     }
 }
