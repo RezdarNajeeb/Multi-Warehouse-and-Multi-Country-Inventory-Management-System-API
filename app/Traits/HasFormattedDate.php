@@ -6,13 +6,18 @@ use Illuminate\Support\Carbon;
 
 trait HasFormattedDate
 {
-    public function getCreatedAtAttribute($value): ?string
+    public function getCreatedAtAttribute(string $value): ?string
     {
-        return Carbon::parse($value)?->format('M j, Y g:i A');
+        return $this->format($value);
     }
 
-    public function getUpdatedAtAttribute($value): ?string
+    public function getUpdatedAtAttribute(string $value): ?string
     {
-        return Carbon::parse($value)?->format('M j, Y g:i A');
+        return $this->format($value);
+    }
+
+    protected function format(string $value, string $format = 'Y-m-d H:i:s'): ?string
+    {
+        return Carbon::parse($value)?->format($format);
     }
 }

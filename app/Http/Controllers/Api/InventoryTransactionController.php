@@ -137,7 +137,7 @@ class InventoryTransactionController extends Controller
     {
         return $this->successResponse(
             new InventoryTransactionResource($inventoryTransaction)
-                ->load(request('relations', 'product,warehouse,supplier,createdBy')),
+                ->load(request('relations', ['product','warehouse','supplier','createdBy'])),
             'Inventory transaction retrieved successfully'
         );
     }

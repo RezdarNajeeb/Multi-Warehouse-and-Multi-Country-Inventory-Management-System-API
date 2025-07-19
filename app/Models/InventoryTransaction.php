@@ -35,6 +35,11 @@ class InventoryTransaction extends Model
         return strtoupper($value);
     }
 
+    public function getDateAttribute($value): ?string
+    {
+        return $this->format($value);
+    }
+
     // relations
     public function product(): BelongsTo
     {

@@ -148,7 +148,7 @@ class InventoryController extends Controller
     {
         return $this->successResponse(
             new InventoryResource(
-                $inventory->load(request('relations', 'product,warehouse'))
+                $inventory->load(request('relations', ['product','warehouse']))
             ),
             'Inventory retrieved successfully'
         );

@@ -32,8 +32,8 @@ class InventoryRequest extends FormRequest
         return [
             'product_id' => "$requiredOrSometimes|integer|exists:products,id",
             'warehouse_id' => "$requiredOrSometimes|integer|exists:warehouses,id",
-            'quantity' => [$requiredOrSometimes, 'integer', 'min:0'],
-            'min_quantity' => [$requiredOrSometimes, 'integer', 'min:0'],
+            'quantity' => "$requiredOrSometimes|integer|min:0",
+            'min_quantity' => "$requiredOrSometimes|integer|min:0",
         ];
     }
 
