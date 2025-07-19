@@ -11,69 +11,69 @@ use App\Events\LowStockDetected;
 
 class InventoryTransferService
 {
-  public function __construct(
-    protected InventoryRepository $inventories,
-    protected InventoryTransactionRepository $transactions,
-  ) {
-    //
-  }
+    public function __construct(
+        protected InventoryRepository $inventories,
+        protected InventoryTransactionRepository $inventoryTransactions,
+    ) {
+        //
+    }
 
-  /**
-   * Handle inventory transfer between warehouses.
-   *
-   * @return array [mixed $data, ?string $error, int $status]
-   */
-  public function transfer(array $validated): array
-  {
-    return DB::transaction(function () use ($validated) {
-      // lock source inventory
-      $sourceInventory = $this->inventories->lockAndGet(
-        $validated['product_id'],
-        $validated['source_warehouse_id']
-      );
+    /**
+     * Handle inventory transfer between warehouses.
+     *
+     * @return array [mixed $data, ?string $error, int $status]
+     */
+    public function transfer(array $validated): array
+    {
+        return DB::transaction(function () use ($validated) {
+            $sourceInventory = $this->inventories
+                ->lockAndGet(
+                    $validated['product_id'],
+                    $validated['source_warehouse_id']
+                );
 
-      // ensure sufficient stock (cannot go below min_quantity)
-      if ($sourceInventory->quantity - $validated['quantity'] < 0) {
-        return [null, 'Insufficient stock in the source warehouse', Response::HTTP_UNPROCESSABLE_ENTITY];
-      }
+            if ($sourceInventory->quantity - $validated['quantity'] < 0) {
+                return [null, 'Insufficient stock in the source warehouse', Response::HTTP_UNPROCESSABLE_ENTITY];
+            }
 
-      // lock destination inventory
-      $destinationInventory = $this->inventories->lockAndGet(
-        $validated['product_id'],
-        $validated['destination_warehouse_id']
-      );
+            $destinationInventory = $this->inventories
+                ->lockAndGet(
+                    $validated['product_id'],
+                    $validated['destination_warehouse_id']
+                );
 
-      // adjust quantities
-      $sourceInventory->decrement('quantity', $validated['quantity']);
-      $destinationInventory->increment('quantity', $validated['quantity']);
+            $sourceInventory->decrement('quantity', $validated['quantity']);
+            $destinationInventory->increment('quantity', $validated['quantity']);
 
-      if ($sourceInventory->quantity <= $sourceInventory->min_quantity) {
-        event(new LowStockDetected(collect([$sourceInventory])));
-      }
+            if ($sourceInventory->quantity <= $sourceInventory->min_quantity) {
+                event(new LowStockDetected(collect([$sourceInventory])));
+            }
 
-      // record transactions (out from source, in to destination)
-      $commonData = [
-        'product_id' => $validated['product_id'],
-        'quantity'   => $validated['quantity'],
-        'date'       => $validated['date'] ?? now(),
-        'created_by' => auth()->id(),
-        'notes'      => $validated['notes'] ?? null,
-      ];
+            // record transactions (out from source, in to destination)
+            $commonData = [
+                'product_id' => $validated['product_id'],
+                'quantity' => $validated['quantity'],
+                'date' => $validated['date'] ?? now(),
+                'created_by' => auth()->id(),
+                'notes' => $validated['notes'] ?? null,
+            ];
 
-      $this->transactions->create(array_merge($commonData, [
-        'warehouse_id'     => $validated['source_warehouse_id'],
-        'transaction_type' => 'out',
-      ]));
+            $this->transactions->create(array_merge($commonData, [
+                'warehouse_id' => $validated['source_warehouse_id'],
+                'transaction_type' => 'out',
+            ]));
 
-      $this->transactions->create(array_merge($commonData, [
-        'warehouse_id'     => $validated['destination_warehouse_id'],
-        'transaction_type' => 'in',
-      ]));
+            $this->transactions->create(array_merge($commonData, [
+                'warehouse_id' => $validated['destination_warehouse_id'],
+                'transaction_type' => 'in',
+            ]));
 
-      return [[
-        'source_inventory'      => new InventoryResource($sourceInventory->refresh()),
-        'destination_inventory' => new InventoryResource($destinationInventory->refresh()),
-      ], null, Response::HTTP_CREATED];
-    });
-  }
+            return [
+                [
+                    'source_inventory' => new InventoryResource($sourceInventory->refresh()),
+                    'destination_inventory' => new InventoryResource($destinationInventory->refresh()),
+                ], null, Response::HTTP_CREATED
+            ];
+        });
+    }
 }
