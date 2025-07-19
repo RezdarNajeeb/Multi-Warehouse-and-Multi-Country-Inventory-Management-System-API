@@ -28,16 +28,16 @@ class SupplierRequest extends FormRequest
         $requiredOrSometimes = $this->routeIs('suppliers.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => "{$requiredOrSometimes}|string|max:100",
-            'contact_info' => "{$requiredOrSometimes}|array",
-            'address' => "{$requiredOrSometimes}|string|max:255",
+            'name' => "$requiredOrSometimes|string|max:100",
+            'contact_info' => "$requiredOrSometimes|array",
+            'address' => "$requiredOrSometimes|string|max:255",
         ];
     }
 
     public function messages(): array
     {
         return [
-            'contact_info.array' => 'The contact information must be a valid json object.',
+            'contact_info.array' => 'The contact info must be valid JSON format.',
         ];
     }
 }

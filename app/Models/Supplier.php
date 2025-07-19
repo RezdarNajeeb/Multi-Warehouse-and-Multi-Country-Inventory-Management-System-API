@@ -16,7 +16,7 @@ class Supplier extends Model
         'address',
     ];
 
-    protected function casts()
+    protected function casts(): array
     {
         return [
             'contact_info' => 'array',
