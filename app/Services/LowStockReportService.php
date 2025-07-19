@@ -2,17 +2,18 @@
 
 namespace App\Services;
 
-use App\Models\Inventory;
 use App\Repositories\LowStockReportRepository;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Log;
 
 class LowStockReportService
 {
-  public function __invoke(): Collection
-  {
-    $lowStockReport = (new LowStockReportRepository)();
+    public function __construct(protected LowStockReportRepository $lowStocksReport)
+    {
+        //
+    }
 
-    return $lowStockReport;
+    public function __invoke(): Collection
+  {
+      return ($this->lowStocksReport)();
   }
 }
