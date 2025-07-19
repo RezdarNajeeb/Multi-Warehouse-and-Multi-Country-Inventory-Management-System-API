@@ -24,20 +24,4 @@ class InventoryTransactionFactory extends Factory
             'created_by' => User::factory(),
         ];
     }
-
-    public function inTransaction(): static
-    {
-        return $this->state(fn() => [
-            'transaction_type' => 'IN',
-            'quantity' => $this->faker->numberBetween(10, 100),
-        ]);
-    }
-
-    public function outTransaction(): static
-    {
-        return $this->state(fn() => [
-            'transaction_type' => 'OUT',
-            'quantity' => $this->faker->numberBetween(1, 50),
-        ]);
-    }
 }
