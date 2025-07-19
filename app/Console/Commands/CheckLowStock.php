@@ -24,7 +24,7 @@ class CheckLowStock extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(): void
     {
         SendLowStockReport::dispatch();
         $this->info('Low stock check has been dispatched.');

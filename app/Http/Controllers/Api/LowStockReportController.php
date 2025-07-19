@@ -18,11 +18,6 @@ class LowStockReportController extends Controller
 {
     use ApiResponse;
 
-    public function __construct(protected LowStockReportService $lowStockReportService)
-    {
-        //
-    }
-
     /**
      * @OA\Get(
      *     path="/reports/low-stock",
@@ -43,7 +38,7 @@ class LowStockReportController extends Controller
     public function __invoke(): JsonResponse
     {
         return $this->successResponse(
-            LowStockReportResource::collection(($this->lowStockReportService)()),
+            LowStockReportResource::collection((new LowStockReportService)()),
             'Low stock report retrieved successfully'
         );
     }

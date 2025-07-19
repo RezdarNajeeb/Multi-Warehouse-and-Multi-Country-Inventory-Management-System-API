@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Collection;
 use Illuminate\Notifications\Messages\SlackMessage;
 
-class LowStockReport extends Notification implements ShouldQueue
+class LowStockReportNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 

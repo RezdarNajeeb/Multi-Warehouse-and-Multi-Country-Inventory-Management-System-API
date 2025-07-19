@@ -5,7 +5,7 @@ namespace App\Jobs;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\LowStockReport;
+use App\Notifications\LowStockReportNotification;
 use App\Services\LowStockReportService;
 
 class SendLowStockReport implements ShouldQueue
@@ -34,6 +34,6 @@ class SendLowStockReport implements ShouldQueue
         Notification::routes([
             'mail' => config('inventory.low_stock_report_email'),
             'slack' => config('services.slack.webhook_url'),
-        ])->notify(new LowStockReport($lowStocks));
+        ])->notify(new LowStockReportNotification($lowStocks));
     }
 }
