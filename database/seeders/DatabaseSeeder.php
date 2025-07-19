@@ -2,10 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\Inventory;
+use App\Models\InventoryTransaction;
 use App\Models\User;
+
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Inventory;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,6 +23,17 @@ class DatabaseSeeder extends Seeder
         //     'email' => 'test@example.com',
         // ]);
 
-        Inventory::factory(10)->create();
+
+        // data for low stock report and inventory transactions
+        Inventory::factory(10)->create([
+            'quantity' => 5,
+            'min_quantity' => 10,
+        ])->each(function ($inventory) {
+            InventoryTransaction::factory(3)->create([
+                'product_id' => $inventory->product_id,
+                'warehouse_id' => $inventory->warehouse_id,
+                'supplier_id' => $inventory->product->supplier_id,
+            ]);
+        });
     }
 }

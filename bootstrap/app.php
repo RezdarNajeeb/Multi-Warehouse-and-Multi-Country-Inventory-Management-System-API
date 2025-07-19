@@ -50,7 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // handle unauthenticated requests (authentication failed)
             if ($e instanceof AuthenticationException) {
                 return response()->json([
-                    'message' => 'Unauthenticated.',
+                    'message' => $e->getMessage()
                 ], 401);
             }
 

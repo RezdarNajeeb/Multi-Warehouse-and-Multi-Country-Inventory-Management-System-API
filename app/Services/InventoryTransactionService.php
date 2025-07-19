@@ -33,7 +33,7 @@ class InventoryTransactionService
                     $validated['warehouse_id']
                 );
 
-            if ($validated['transaction_type'] === 'in') {
+            if (strtoupper($validated['transaction_type']) === 'IN') {
                 $inventory->increment('quantity', $validated['quantity']);
             } else {
                 if ($inventory->quantity - $validated['quantity'] < 0) {

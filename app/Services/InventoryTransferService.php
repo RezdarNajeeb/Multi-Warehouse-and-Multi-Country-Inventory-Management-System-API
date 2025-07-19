@@ -60,12 +60,12 @@ class InventoryTransferService
 
             $this->inventoryTransactions->create(array_merge($commonData, [
                 'warehouse_id' => $validated['source_warehouse_id'],
-                'transaction_type' => 'out',
+                'transaction_type' => 'OUT',
             ]));
 
             $this->inventoryTransactions->create(array_merge($commonData, [
                 'warehouse_id' => $validated['destination_warehouse_id'],
-                'transaction_type' => 'in',
+                'transaction_type' => 'IN',
             ]));
 
             return [
