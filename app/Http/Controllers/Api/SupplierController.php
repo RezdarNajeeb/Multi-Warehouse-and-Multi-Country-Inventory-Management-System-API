@@ -44,7 +44,7 @@ class SupplierController extends Controller
      *         in="query",
      *         required=false,
      *         description="Related models to include (comma-separated)",
-     *         @OA\Schema(type="string", example="products,contacts")
+     *         @OA\Schema(type="string", example="products")
      *     ),
      *
      *     @OA\Response(
@@ -66,7 +66,7 @@ class SupplierController extends Controller
             SupplierResource::collection(
                 $this->supplierService->list(
                     request('perPage', 10),
-                    request('relations', []),
+                    request('relations', ''),
                 )
             ),
             'Suppliers retrieved successfully'
@@ -124,7 +124,7 @@ class SupplierController extends Controller
      *         in="query",
      *         required=false,
      *         description="Related models to include (comma-separated)",
-     *         @OA\Schema(type="string", example="products,contacts")
+     *         @OA\Schema(type="string", example="products")
      *     ),
      *
      *     @OA\Response(
@@ -144,7 +144,7 @@ class SupplierController extends Controller
     {
         return $this->successResponse(
             new SupplierResource($supplier)
-                ->load(request('relations', [])),
+                ->load(request('relations', 'products')),
             'Supplier retrieved successfully');
     }
 

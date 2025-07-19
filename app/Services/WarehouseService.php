@@ -8,28 +8,28 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class WarehouseService
 {
-  public function __construct(protected WarehouseRepository $repository)
+  public function __construct(protected WarehouseRepository $warehouses)
   {
     //
   }
 
   public function list(int $perPage, string $relations = ''): CursorPaginator
   {
-    return $this->repository->paginate($perPage, explode(',', $relations));
+    return $this->warehouses->paginate($perPage, explode(',', $relations));
   }
 
   public function create(array $validated): Warehouse
   {
-    return $this->repository->create($validated);
+    return $this->warehouses->create($validated);
   }
 
   public function update(array $validated, Warehouse $warehouse): Warehouse
   {
-    return $this->repository->update($warehouse, $validated);
+    return $this->warehouses->update($warehouse, $validated);
   }
 
   public function delete(Warehouse $warehouse): void
   {
-    $this->repository->delete($warehouse);
+    $this->warehouses->delete($warehouse);
   }
 }

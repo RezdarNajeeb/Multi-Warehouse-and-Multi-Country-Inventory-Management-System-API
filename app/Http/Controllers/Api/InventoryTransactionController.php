@@ -31,6 +31,21 @@ class InventoryTransactionController extends Controller
      *     summary="List of paginated inventory transactions",
      *     tags={"Inventory Transactions"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of transactions per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Comma-separated list of relations to eager load",
+     *         @OA\Schema(type="string", example="product,warehouse,supplier,createdBy")
+     *     ),
+     *
      *     @OA\Response(
      *          response=200,
      *          description="OK",
@@ -47,7 +62,12 @@ class InventoryTransactionController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            InventoryTransactionResource::collection($this->service->list()),
+            InventoryTransactionResource::collection(
+                $this->service->list(
+                    request('perPage', 10),
+                    request('relations', '')
+                )
+            ),
             'Inventory transactions retrieved successfully'
         );
     }
@@ -80,7 +100,8 @@ class InventoryTransactionController extends Controller
             return $this->errorResponse($error, $status);
         }
 
-        return $this->createdResponse(new InventoryTransactionResource($data), 'Inventory transaction successfully recorded');
+        return $this->createdResponse(new InventoryTransactionResource($data),
+            'Inventory transaction successfully recorded');
     }
 
     /**
@@ -96,6 +117,13 @@ class InventoryTransactionController extends Controller
      *         description="Transaction ID",
      *         @OA\Schema(type="integer")
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Comma-separated list of relations to eager load",
+     *         @OA\Schema(type="string", example="product,warehouse,supplier,createdBy")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Transaction details",
@@ -108,7 +136,8 @@ class InventoryTransactionController extends Controller
     public function show(InventoryTransaction $inventoryTransaction): JsonResponse
     {
         return $this->successResponse(
-            new InventoryTransactionResource($inventoryTransaction),
+            new InventoryTransactionResource($inventoryTransaction)
+                ->load(request('relations', 'product,warehouse,supplier,createdBy')),
             'Inventory transaction retrieved successfully'
         );
     }

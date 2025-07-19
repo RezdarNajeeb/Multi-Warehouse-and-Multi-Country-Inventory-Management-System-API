@@ -65,7 +65,7 @@ class WarehouseController extends Controller
             WarehouseResource::collection(
                 $this->warehouseService->list(
                     request('perPage', 10),
-                    request('relations', []),
+                    request('relations', ''),
                 )
             ),
             'Warehouses retrieved successfully'
@@ -142,7 +142,7 @@ class WarehouseController extends Controller
     {
         return $this->successResponse(
             new WarehouseResource($warehouse)
-                ->load(request('relations', [])),
+                ->load(request('relations', 'country')),
             'Warehouse retrieved successfully'
         );
     }

@@ -65,7 +65,7 @@ class ProductController extends Controller
             ProductResource::collection(
                 $this->productService->list(
                     request('perPage', 10),
-                    request('relations', []),
+                    request('relations', ''),
                 )
             ),
             'Products retrieved successfully'
@@ -144,7 +144,7 @@ class ProductController extends Controller
             new ProductResource(
                 $this->productService->find(
                     $product,
-                    request('relations', [])
+                    request('relations', 'supplier')
                 )
             ),
             'Product retrieved successfully'

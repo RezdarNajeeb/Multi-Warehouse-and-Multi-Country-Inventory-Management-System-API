@@ -8,28 +8,28 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class SupplierService
 {
-  public function __construct(protected SupplierRepository $repository)
+  public function __construct(protected SupplierRepository $suppliers)
   {
     //
   }
 
   public function list(int $perPage = 10, string $relations = ''): CursorPaginator
   {
-    return $this->repository->paginate($perPage, explode(',', $relations));
+    return $this->suppliers->paginate($perPage, explode(',', $relations));
   }
 
   public function create(array $validated): Supplier
   {
-    return $this->repository->create($validated);
+    return $this->suppliers->create($validated);
   }
 
   public function update(array $validated, Supplier $supplier): Supplier
   {
-    return $this->repository->update($supplier, $validated);
+    return $this->suppliers->update($supplier, $validated);
   }
 
   public function delete(Supplier $supplier): void
   {
-    $this->repository->delete($supplier);
+    $this->suppliers->delete($supplier);
   }
 }

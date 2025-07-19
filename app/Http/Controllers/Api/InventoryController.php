@@ -69,7 +69,7 @@ class InventoryController extends Controller
             InventoryResource::collection(
                 $this->inventoryService->list(
                     request('perPage', 10),
-                    request('relations'),
+                    request('relations', ''),
                 )
             ),
             'Inventories retrieved successfully'
@@ -148,7 +148,7 @@ class InventoryController extends Controller
     {
         return $this->successResponse(
             new InventoryResource(
-                $inventory->load(request('relations', ['product', 'warehouse']))
+                $inventory->load(request('relations', 'product,warehouse'))
             ),
             'Inventory retrieved successfully'
         );
