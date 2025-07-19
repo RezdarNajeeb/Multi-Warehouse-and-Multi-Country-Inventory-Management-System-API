@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
@@ -27,16 +28,19 @@ class ProductRequest extends FormRequest
 
     public function rules(): array
     {
-        $isStore = $this->routeIs('products.store');
-        $requiredOrSometimes = $isStore ? 'required' : 'sometimes';
+        $requiredOrSometimes = $this->routeIs('products.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => "{$requiredOrSometimes}|string|max:255",
-            'sku' => "{$requiredOrSometimes}|string|max:50|unique:products,sku" .
-                ($isStore ? '' : ",{$this->route('product')?->id}"),
+            'name' => "$requiredOrSometimes|string|max:255",
+            'sku' => [
+                $requiredOrSometimes,
+                'string',
+                'max:50',
+                Rule::unique('products')->ignore($this->route('product')?->id)
+            ],
             'status' => 'sometimes|boolean',
             'description' => 'sometimes|string|max:65535',
-            'price' => "{$requiredOrSometimes}|numeric|min:0",
+            'price' => "$requiredOrSometimes|numeric|min:0",
         ];
     }
 }

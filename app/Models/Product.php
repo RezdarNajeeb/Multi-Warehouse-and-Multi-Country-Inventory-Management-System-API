@@ -19,7 +19,7 @@ class Product extends Model
         'price',
     ];
 
-    protected function casts()
+    protected function casts(): array
     {
         return [
             'status' => 'boolean',

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
+
 class Inventory extends Model
 {
     use HasFactory;
@@ -18,20 +19,22 @@ class Inventory extends Model
         'min_quantity',
     ];
 
-    protected $casts = [
-        'total_stock' => 'integer',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'total_stock' => 'integer',
+        ];
+    }
 
     // scopes
     public function scopeFilter($query, array $filters): Builder
     {
         return $query
-        ->when($filters['country_id'] ?? null, fn($q, $id) =>
-            $q->whereHas('warehouse', fn($wq) => $wq->where('country_id', $id))
-        )
-        ->when($filters['warehouse_id'] ?? null, fn($q, $id) =>
-            $q->where('warehouse_id', $id)
-        );
+            ->when($filters['country_id'] ?? null,
+                fn($q, $id) => $q->whereHas('warehouse', fn($wq) => $wq->where('country_id', $id))
+            )
+            ->when($filters['warehouse_id'] ?? null, fn($q, $id) => $q->where('warehouse_id', $id)
+            );
     }
 
     // relations
