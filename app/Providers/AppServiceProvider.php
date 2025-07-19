@@ -21,11 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Avoid registering the Redis-dependent ProductObserver when running the test suite
-        if ($this->app->environment('testing')) {
-            return;
-        }
-
         Product::observe(ProductObserver::class);
     }
 }

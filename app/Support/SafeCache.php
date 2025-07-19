@@ -2,21 +2,26 @@
 
 namespace App\Support;
 
-namespace App\Support;
-
 use Closure;
 use Exception;
 use Illuminate\Support\Facades\Cache;
 
 class SafeCache
 {
-    public static function remember(string $key, int $ttl, Closure $callback)
+    public static function remember(string $key, int $ttl, Closure $callback, array $tags = ['products'])
     {
         try {
-            return Cache::store('redis')->remember($key, $ttl, $callback);
+            $store = self::getStorePlace();
+
+            $cache = Cache::store($store);
+            if ($store !== 'array') {
+                $cache = $cache->tags($tags);
+            }
+
+            return $cache->remember($key, $ttl, $callback);
         } catch (Exception $e) {
             logger()->warning($e->getMessage());
-            logger()->warning("Redis unavailable, serving fresh data. Key: {$key}");
+            logger()->warning("Cache unavailable, serving fresh data. Key: {$key}");
             return $callback();
         }
     }
@@ -24,11 +29,19 @@ class SafeCache
     public static function flushTag(string $tag): void
     {
         try {
-            Cache::store('redis')->tags([$tag])->flush();
+            $store = self::getStorePlace();
+
+            if ($store !== 'array') {
+                Cache::store($store)->tags([$tag])->flush();
+            }
         } catch (Exception $e) {
             logger()->warning($e->getMessage());
-            logger()->warning("Redis unavailable — could not flush cache tag: {$tag}");
+            logger()->warning("Could not flush cache tag: {$tag}");
         }
     }
-}
 
+    private static function getStorePlace(): string
+    {
+        return app()->environment('testing') ? 'array' : 'redis';
+    }
+}
