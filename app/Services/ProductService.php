@@ -14,7 +14,7 @@ class ProductService
         //
     }
 
-    public function list(int $perPage = 10, array $relations = []): CursorPaginator
+    public function list(int $perPage = 10, string $relations = ''): CursorPaginator
     {
         $cursor = request('cursor', 'first');
         $cacheKey = "products:paginate:{$perPage}:{$cursor}";
@@ -22,17 +22,17 @@ class ProductService
         // Cache paginated product lists for 5 minutes to boost read performance
         return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'),
             function () use ($perPage, $relations) {
-                return $this->products->paginate($perPage, $relations);
+                return $this->products->paginate($perPage, explode(',', $relations));
             });
     }
 
-    public function find(int $productId, array $relations = []): Product
+    public function find(int $productId, string $relations = ''): Product
     {
         $cacheKey = "products:single:{$productId}";
 
         return Cache::store('redis')->tags(['products'])->remember($cacheKey, config('cache.ttl'),
             function () use ($productId, $relations) {
-                return $this->products->find($productId, $relations);
+                return $this->products->find($productId, explode(',', $relations));
             });
     }
 

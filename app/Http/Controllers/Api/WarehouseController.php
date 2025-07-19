@@ -32,6 +32,20 @@ class WarehouseController extends Controller
      *     summary="List paginated warehouses",
      *     tags={"Warehouses"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of warehouses per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Related models to include (comma-separated)",
+     *         @OA\Schema(type="string", example="country")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -48,7 +62,12 @@ class WarehouseController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            WarehouseResource::collection($this->warehouseService->list()),
+            WarehouseResource::collection(
+                $this->warehouseService->list(
+                    request('perPage', 10),
+                    request('relations', []),
+                )
+            ),
             'Warehouses retrieved successfully'
         );
     }
@@ -79,7 +98,9 @@ class WarehouseController extends Controller
     public function store(WarehouseRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new WarehouseResource($this->warehouseService->create($request->validated())),
+            new WarehouseResource(
+                $this->warehouseService->create($request->validated())
+            ),
             'Warehouse created successfully'
         );
     }
@@ -97,6 +118,13 @@ class WarehouseController extends Controller
      *         description="Warehouse ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Related models to include (comma-separated)",
+     *         @OA\Schema(type="string", example="country")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -112,7 +140,11 @@ class WarehouseController extends Controller
      */
     public function show(Warehouse $warehouse): JsonResponse
     {
-        return $this->successResponse(new WarehouseResource($warehouse), 'Warehouse retrieved successfully');
+        return $this->successResponse(
+            new WarehouseResource($warehouse)
+                ->load(request('relations', [])),
+            'Warehouse retrieved successfully'
+        );
     }
 
     /**

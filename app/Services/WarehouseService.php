@@ -13,9 +13,9 @@ class WarehouseService
     //
   }
 
-  public function list(): CursorPaginator
+  public function list(int $perPage, string $relations = ''): CursorPaginator
   {
-    return $this->repository->paginate();
+    return $this->repository->paginate($perPage, explode(',', $relations));
   }
 
   public function create(array $validated): Warehouse

@@ -7,9 +7,9 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class WarehouseRepository
 {
-  public function paginate(int $perPage = 10): CursorPaginator
+  public function paginate(int $perPage, array $relations): CursorPaginator
   {
-    return Warehouse::with('country')->orderBy('id')->cursorPaginate($perPage);
+    return Warehouse::with($relations)->orderBy('id')->cursorPaginate($perPage);
   }
 
   public function create(array $data): Warehouse

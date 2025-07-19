@@ -43,7 +43,7 @@ class SupplierController extends Controller
      *         name="relations",
      *         in="query",
      *         required=false,
-     *         description="Related models to include",
+     *         description="Related models to include (comma-separated)",
      *         @OA\Schema(type="string", example="products,contacts")
      *     ),
      *
@@ -123,7 +123,7 @@ class SupplierController extends Controller
      *         name="relations",
      *         in="query",
      *         required=false,
-     *         description="Related models to include",
+     *         description="Related models to include (comma-separated)",
      *         @OA\Schema(type="string", example="products,contacts")
      *     ),
      *

@@ -42,6 +42,13 @@ class InventoryController extends Controller
      *         description="Number of inventories per page",
      *         @OA\Schema(type="integer", default=10, example=10)
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Comma-separated list of relations to eager load",
+     *         @OA\Schema(type="string", example="product,warehouse")
+     *     ),
      *
      *     @OA\Response(
      *         response=200,
