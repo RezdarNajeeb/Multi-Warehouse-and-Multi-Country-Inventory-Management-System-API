@@ -28,6 +28,13 @@ class InventoryTransaction extends Model
         ];
     }
 
+    // getters
+    public function getTransactionTypeAttribute($value): string
+    {
+        return strtoupper($value);
+    }
+
+    // relations
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

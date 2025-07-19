@@ -30,13 +30,22 @@ class InventoryTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'product_id' => 'required|exists:products,id',
-            'warehouse_id' => 'required|exists:warehouses,id',
-            'supplier_id' => 'required_if:transaction_type,in|exists:suppliers,id',
+            'product_id' => 'required|integer|exists:products,id',
+            'warehouse_id' => 'required|integer|exists:warehouses,id',
+            'supplier_id' => 'required_if:transaction_type,in|integer|exists:suppliers,id',
             'quantity' => "required|integer|min:1",
-            'transaction_type' => "required|in:in,out",
+            'transaction_type' => "required|string|in:in,out",
             'date' => "nullable|date|before_or_equal:now",
             'notes' => 'nullable|string|max:65535',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'product_id.exists' => 'The selected product does not exist.',
+            'warehouse_id.exists' => 'The selected warehouse does not exist.',
+            'supplier_id.exists' => 'The selected supplier does not exist.',
         ];
     }
 }
