@@ -45,4 +45,15 @@ class InventoryTransferRequest extends FormRequest
             'notes' => 'nullable|string|max:65535',
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'product_id.exists' => 'The selected product does not exist.',
+            'source_warehouse_id.exists' => 'The selected source warehouse does not exist.',
+            'destination_warehouse_id.exists' => 'The selected destination warehouse does not exist.',
+            'destination_warehouse_id.different' => 'The destination warehouse must be different from the source warehouse.',
+            'date.before_or_equal' => 'The date must be today or in the past.',
+        ];
+    }
 }

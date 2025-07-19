@@ -46,6 +46,7 @@ class InventoryTransactionRequest extends FormRequest
             'product_id.exists' => 'The selected product does not exist.',
             'warehouse_id.exists' => 'The selected warehouse does not exist.',
             'supplier_id.exists' => 'The selected supplier does not exist.',
+            'date.before_or_equal' => 'The date must be today or in the past.',
         ];
     }
 }
