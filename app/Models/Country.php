@@ -15,6 +15,11 @@ class Country extends Model
         'code',
     ];
 
+    public function getUniqueAttribute(string $value): string
+    {
+        return strtoupper($value);
+    }
+
     // relations
     public function warehouses(): HasMany
     {

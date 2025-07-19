@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * @OA\Schema(
@@ -24,15 +25,15 @@ class CountryRequest extends FormRequest
 
     public function rules(): array
     {
-        $isStore = $this->routeIs('countries.store');
+        $requiredOrSometimes = $this->routeIs('countries.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => ($isStore ? 'required' : 'sometimes') . '|string|min:4|max:100',
+            'name' => "$requiredOrSometimes|string|min:4|max:100",
 
             'code' => [
-                $isStore ? 'required' : 'sometimes',
-                'regex:/^([A-Z]{2,3}|\d{3})$/',
-                'unique:countries,code' . ($isStore ? '' : ',' . $this->route('country')->id),
+                $requiredOrSometimes,
+                'regex:/^([A-Za-z]{2,3}|\d{3})$/',
+                Rule::unique('countries', 'code')->ignore($this->route('country')?->id),
             ],
         ];
     }
