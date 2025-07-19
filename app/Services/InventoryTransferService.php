@@ -58,12 +58,12 @@ class InventoryTransferService
                 'notes' => $validated['notes'] ?? null,
             ];
 
-            $this->transactions->create(array_merge($commonData, [
+            $this->inventoryTransactions->create(array_merge($commonData, [
                 'warehouse_id' => $validated['source_warehouse_id'],
                 'transaction_type' => 'out',
             ]));
 
-            $this->transactions->create(array_merge($commonData, [
+            $this->inventoryTransactions->create(array_merge($commonData, [
                 'warehouse_id' => $validated['destination_warehouse_id'],
                 'transaction_type' => 'in',
             ]));
