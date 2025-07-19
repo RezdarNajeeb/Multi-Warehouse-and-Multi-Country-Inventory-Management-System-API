@@ -21,7 +21,7 @@
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Register a new user and retrieve a JWT token",
+                "summary": "Register for a new account",
                 "operationId": "8e4e3cb7b46126f4696379d3c7eeb4ad",
                 "requestBody": {
                     "required": true,
@@ -44,17 +44,8 @@
                                             "type": "string",
                                             "example": "User registered successfully"
                                         },
-                                        "data": {
-                                            "properties": {
-                                                "user": {
-                                                    "$ref": "#/components/schemas/UserResource"
-                                                },
-                                                "token": {
-                                                    "type": "string",
-                                                    "example": "jwt.token.here"
-                                                }
-                                            },
-                                            "type": "object"
+                                        "user": {
+                                            "$ref": "#/components/schemas/UserResource"
                                         }
                                     },
                                     "type": "object"
@@ -150,6 +141,19 @@
                 ],
                 "summary": "List paginated countries",
                 "operationId": "bbb90b9e86a9cab92aaa448fe98954c9",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of countries per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -388,6 +392,69 @@
                 ]
             }
         },
+        "/api/inventory/global-view": {
+            "get": {
+                "tags": [
+                    "Inventories"
+                ],
+                "summary": "Global inventory view",
+                "operationId": "e7346334571017c211d1fbf8c60c3309",
+                "parameters": [
+                    {
+                        "name": "country_id",
+                        "in": "query",
+                        "description": "Filter by country ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    },
+                    {
+                        "name": "warehouse_id",
+                        "in": "query",
+                        "description": "Filter by warehouse ID",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 5
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Global inventory data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Global stock retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/GlobalStockResource"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
+                    }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
+            }
+        },
         "/api/inventories": {
             "get": {
                 "tags": [
@@ -395,6 +462,29 @@
                 ],
                 "summary": "List of paginated inventories",
                 "operationId": "4e9524f37c543a05ac16484d4aeea25e",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of inventories per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Comma-separated list of relations to eager load",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "product,warehouse"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -497,6 +587,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Comma-separated list of relations to eager load",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "product,warehouse"
                         }
                     }
                 ],
@@ -633,69 +733,6 @@
                 ]
             }
         },
-        "/api/inventory/global-view": {
-            "get": {
-                "tags": [
-                    "Inventories"
-                ],
-                "summary": "Global inventory view",
-                "operationId": "a4754c43045d7609ab25cbf7e152f467",
-                "parameters": [
-                    {
-                        "name": "country_id",
-                        "in": "query",
-                        "description": "Filter by country ID",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 1
-                        }
-                    },
-                    {
-                        "name": "warehouse_id",
-                        "in": "query",
-                        "description": "Filter by warehouse ID",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "example": 5
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Global inventory data",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Global inventory view retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/components/schemas/GlobalStockResource"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "$ref": "#/components/responses/Unauthorized"
-                    }
-                },
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ]
-            }
-        },
         "/api/inventory-transactions": {
             "get": {
                 "tags": [
@@ -703,6 +740,29 @@
                 ],
                 "summary": "List of paginated inventory transactions",
                 "operationId": "be0f3f4f7580dc73930bc582944a2529",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of transactions per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Comma-separated list of relations to eager load",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "product,warehouse,supplier,createdBy"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -795,6 +855,16 @@
                         "required": true,
                         "schema": {
                             "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Comma-separated list of relations to eager load",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "product,warehouse,supplier,createdBy"
                         }
                     }
                 ],
@@ -891,6 +961,9 @@
                                 }
                             }
                         }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/Unauthorized"
                     }
                 },
                 "security": [
@@ -907,6 +980,29 @@
                 ],
                 "summary": "List paginated products",
                 "operationId": "d97d1c3727cbac49708b85f7d11f7d58",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of products per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Eager load relations (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "category,brand"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1009,6 +1105,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Eager load relations (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "category,brand"
                         }
                     }
                 ],
@@ -1152,6 +1258,29 @@
                 ],
                 "summary": "List paginated suppliers",
                 "operationId": "6207e57dd1dcd1d6e7125fe144607196",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of suppliers per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Related models to include (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "products"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1254,6 +1383,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Related models to include (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "products"
                         }
                     }
                 ],
@@ -1397,6 +1536,29 @@
                 ],
                 "summary": "List paginated warehouses",
                 "operationId": "0c48cbbd5731b5e56eda7c180576670b",
+                "parameters": [
+                    {
+                        "name": "perPage",
+                        "in": "query",
+                        "description": "Number of warehouses per page",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10,
+                            "example": 10
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Related models to include (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "country"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1499,6 +1661,16 @@
                         "schema": {
                             "type": "integer",
                             "example": 1
+                        }
+                    },
+                    {
+                        "name": "relations",
+                        "in": "query",
+                        "description": "Related models to include (comma-separated)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "country"
                         }
                     }
                 ],
