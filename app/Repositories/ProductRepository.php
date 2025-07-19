@@ -7,14 +7,14 @@ use Illuminate\Contracts\Pagination\CursorPaginator;
 
 class ProductRepository
 {
-  public function paginate(int $perPage = 10): CursorPaginator
+  public function paginate(int $perPage, array $relations): CursorPaginator
   {
-    return Product::orderBy('id')->cursorPaginate($perPage);
+    return Product::with($relations)->orderBy('id')->cursorPaginate($perPage);
   }
 
-  public function find(int $productId): Product
+  public function find(int $productId, array $relations): Product
   {
-    return Product::findOrFail($productId);
+    return Product::findOrFail($productId)->load($relations);
   }
 
   public function create(array $data): Product

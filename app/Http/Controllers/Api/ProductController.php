@@ -32,6 +32,20 @@ class ProductController extends Controller
      *     summary="List paginated products",
      *     tags={"Products"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of products per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Eager load relations (comma-separated)",
+     *         @OA\Schema(type="string", example="category,brand")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -48,7 +62,12 @@ class ProductController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            ProductResource::collection($this->productService->list()),
+            ProductResource::collection(
+                $this->productService->list(
+                    request('perPage', 10),
+                    request('relations', []),
+                )
+            ),
             'Products retrieved successfully'
         );
     }
@@ -79,7 +98,9 @@ class ProductController extends Controller
     public function store(ProductRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new ProductResource($this->productService->create($request->validated())),
+            new ProductResource(
+                $this->productService->create($request->validated())
+            ),
             'Product created successfully'
         );
     }
@@ -97,6 +118,13 @@ class ProductController extends Controller
      *         description="Product ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Eager load relations (comma-separated)",
+     *         @OA\Schema(type="string", example="category,brand")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -113,7 +141,12 @@ class ProductController extends Controller
     public function show(int $product): JsonResponse
     {
         return $this->successResponse(
-            new ProductResource($this->productService->find($product)),
+            new ProductResource(
+                $this->productService->find(
+                    $product,
+                    request('relations', [])
+                )
+            ),
             'Product retrieved successfully'
         );
     }
@@ -152,7 +185,9 @@ class ProductController extends Controller
     public function update(ProductRequest $request, Product $product): JsonResponse
     {
         return $this->successResponse(
-            new ProductResource($this->productService->update($request->validated(), $product)),
+            new ProductResource(
+                $this->productService->update($request->validated(), $product)
+            ),
             'Product updated successfully'
         );
     }
