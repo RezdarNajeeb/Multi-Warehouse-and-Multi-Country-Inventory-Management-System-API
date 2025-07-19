@@ -11,37 +11,35 @@ use Illuminate\Support\Arr;
 
 class InventoryService
 {
-  public function __construct(protected InventoryRepository $repository)
+  public function __construct(protected InventoryRepository $inventories)
   {
     //
   }
 
-  public function list(): CursorPaginator
+  public function list(int $perPage = 10, array $relations = []): CursorPaginator
   {
-    return $this->repository->paginate();
+    return $this->inventories->paginate($perPage, $relations);
   }
 
   public function create(array $validated): Inventory
   {
-    $inventory = $this->repository->create($validated);
+    $inventory = $this->inventories->create($validated);
 
+    // Check if the inventory is low stock after creation
     $this->dispatchLowStockEvent($inventory);
 
     return $inventory;
   }
 
-  /**
-   * Update inventory with business constraints.
-   * Returns array with [Inventory $model, string $message]
-   */
   public function update(array $validated, Inventory $inventory): array
   {
     $locked = $this->hasStockOrHistory($inventory);
 
     $data = $locked ? Arr::only($validated, ['quantity', 'min_quantity']) : $validated;
 
-    $updated = $this->repository->update($inventory, $data);
+    $updated = $this->inventories->update($inventory, $data);
 
+    // Check if the updated inventory is low stock
     $this->dispatchLowStockEvent($updated);
 
     $message = $locked
@@ -51,22 +49,19 @@ class InventoryService
     return [$updated, $message];
   }
 
-  /**
-   * Attempt to delete inventory. Returns null on success or string error message.
-   */
   public function delete(Inventory $inventory): ?string
   {
     if ($this->hasStockOrHistory($inventory)) {
       return 'Inventory cannot be deleted (stock or history exists).';
     }
 
-    $this->repository->delete($inventory);
+    $this->inventories->delete($inventory);
     return null;
   }
 
-  public function getGlobalView(array $filters): Collection
+  public function getGlobalView(array $filters = []): Collection
   {
-    return $this->repository->getGlobalView($filters);
+    return $this->inventories->getGlobalView($filters);
   }
 
   private function hasStockOrHistory(Inventory $inventory): bool

@@ -32,6 +32,15 @@ class CountryController extends Controller
      *     summary="List paginated countries",
      *     tags={"Countries"},
      *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of countries per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="OK",

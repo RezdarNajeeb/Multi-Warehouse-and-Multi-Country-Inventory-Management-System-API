@@ -34,6 +34,15 @@ class InventoryController extends Controller
      *     summary="List of paginated inventories",
      *     tags={"Inventories"},
      *     security={{"bearerAuth":{}}},
+     *
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of inventories per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -50,7 +59,12 @@ class InventoryController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            InventoryResource::collection($this->inventoryService->list()),
+            InventoryResource::collection(
+                $this->inventoryService->list(
+                    request('perPage', 10),
+                    request('relations'),
+                )
+            ),
             'Inventories retrieved successfully'
         );
     }
@@ -81,7 +95,11 @@ class InventoryController extends Controller
     public function store(InventoryRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new InventoryResource($this->inventoryService->create($request->validated())),
+            new InventoryResource(
+                $this->inventoryService->create(
+                    $request->validated()
+                )
+            ),
             'Inventory created successfully'
         );
     }
@@ -99,6 +117,13 @@ class InventoryController extends Controller
      *         description="Inventory ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Comma-separated list of relations to eager load",
+     *         @OA\Schema(type="string", example="product,warehouse")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -115,7 +140,9 @@ class InventoryController extends Controller
     public function show(Inventory $inventory): JsonResponse
     {
         return $this->successResponse(
-            new InventoryResource($inventory->load(['product', 'warehouse'])),
+            new InventoryResource(
+                $inventory->load(request('relations', ['product', 'warehouse']))
+            ),
             'Inventory retrieved successfully'
         );
     }
@@ -154,7 +181,9 @@ class InventoryController extends Controller
     public function update(InventoryRequest $request, Inventory $inventory): JsonResponse
     {
         return $this->successResponse(
-            new InventoryResource($this->inventoryService->update($request->validated(), $inventory)),
+            new InventoryResource(
+                $this->inventoryService->update($request->validated(), $inventory)
+            ),
             'Inventory updated successfully'
         );
     }
@@ -180,54 +209,11 @@ class InventoryController extends Controller
     public function destroy(Inventory $inventory): Response|JsonResponse
     {
         $error = $this->inventoryService->delete($inventory);
+
         if ($error) {
             return $this->validationErrorResponse($error);
         }
 
         return $this->deletedResponse();
-    }
-
-    /**
-     * @OA\Get(
-     *     path="/api/inventory/global-view",
-     *     summary="Global inventory view",
-     *     tags={"Inventories"},
-     *     security={{"bearerAuth":{}}},
-     *     @OA\Parameter(
-     *         name="country_id",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by country ID",
-     *         @OA\Schema(type="integer", example=1)
-     *     ),
-     *     @OA\Parameter(
-     *         name="warehouse_id",
-     *         in="query",
-     *         required=false,
-     *         description="Filter by warehouse ID",
-     *         @OA\Schema(type="integer", example=5)
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="Global inventory data",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Global inventory view retrieved successfully"),
-     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/GlobalStockResource"))
-     *         )
-     *     ),
-     *     @OA\Response(response=401, ref="#/components/responses/Unauthorized")
-     * )
-     */
-    public function getGlobalView(Request $request): JsonResponse
-    {
-        return $this->successResponse(
-            GlobalStockResource::collection(
-                $this->inventoryService->getGlobalView(
-                    $request->only(['country_id', 'warehouse_id'])
-                )
-            ),
-            'Global inventory view retrieved successfully'
-        );
     }
 }
