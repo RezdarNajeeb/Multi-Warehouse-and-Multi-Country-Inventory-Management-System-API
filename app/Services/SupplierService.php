@@ -13,9 +13,9 @@ class SupplierService
     //
   }
 
-  public function list(int $perPage = 10): CursorPaginator
+  public function list(int $perPage = 10, array $relations = []): CursorPaginator
   {
-    return $this->repository->paginate($perPage);
+    return $this->repository->paginate($perPage, $relations);
   }
 
   public function create(array $validated): Supplier

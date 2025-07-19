@@ -10,9 +10,9 @@ class SupplierRepository
   /**
    * Paginate suppliers list.
    */
-  public function paginate(int $perPage = 10): CursorPaginator
+  public function paginate(int $perPage, array $relations): CursorPaginator
   {
-    return Supplier::orderBy('id')->cursorPaginate($perPage);
+    return Supplier::with($relations)->orderBy('id')->cursorPaginate($perPage);
   }
 
   /**

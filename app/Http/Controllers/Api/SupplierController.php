@@ -32,6 +32,21 @@ class SupplierController extends Controller
      *     summary="List paginated suppliers",
      *     tags={"Suppliers"},
      *     security={{"bearerAuth":{}}},
+     *     @OA\Parameter(
+     *         name="perPage",
+     *         in="query",
+     *         required=false,
+     *         description="Number of suppliers per page",
+     *         @OA\Schema(type="integer", default=10, example=10)
+     *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Related models to include",
+     *         @OA\Schema(type="string", example="products,contacts")
+     *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -48,7 +63,12 @@ class SupplierController extends Controller
     public function index(): JsonResponse
     {
         return $this->successResponse(
-            SupplierResource::collection($this->supplierService->list()),
+            SupplierResource::collection(
+                $this->supplierService->list(
+                    request('perPage', 10),
+                    request('relations', []),
+                )
+            ),
             'Suppliers retrieved successfully'
         );
     }
@@ -79,7 +99,9 @@ class SupplierController extends Controller
     public function store(SupplierRequest $request): JsonResponse
     {
         return $this->createdResponse(
-            new SupplierResource($this->supplierService->create($request->validated())),
+            new SupplierResource(
+                $this->supplierService->create($request->validated())
+            ),
             'Supplier created successfully'
         );
     }
@@ -97,6 +119,14 @@ class SupplierController extends Controller
      *         description="Supplier ID",
      *         @OA\Schema(type="integer", example=1)
      *     ),
+     *     @OA\Parameter(
+     *         name="relations",
+     *         in="query",
+     *         required=false,
+     *         description="Related models to include",
+     *         @OA\Schema(type="string", example="products,contacts")
+     *     ),
+     *
      *     @OA\Response(
      *         response=200,
      *         description="OK",
@@ -112,7 +142,10 @@ class SupplierController extends Controller
      */
     public function show(Supplier $supplier): JsonResponse
     {
-        return $this->successResponse(new SupplierResource($supplier), 'Supplier retrieved successfully');
+        return $this->successResponse(
+            new SupplierResource($supplier)
+                ->load(request('relations', [])),
+            'Supplier retrieved successfully');
     }
 
     /**
