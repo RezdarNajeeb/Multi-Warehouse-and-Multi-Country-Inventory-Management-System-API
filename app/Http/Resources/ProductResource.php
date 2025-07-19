@@ -20,7 +20,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  *     @OA\Property(property="description", type="string", example="Apple iPhone 14 128GB Black"),
  *     @OA\Property(property="price", type="number", format="float", example=999.99),
  *     @OA\Property(property="created_at", type="string", format="date-time"),
- *     @OA\Property(property="updated_at", type="string", format="date-time")
+ *     @OA\Property(property="updated_at", type="string", format="date-time"),
+ *     @OA\Property(property="supplier", ref="#/components/schemas/SupplierResource"),
  * )
  */
 class ProductResource extends JsonResource

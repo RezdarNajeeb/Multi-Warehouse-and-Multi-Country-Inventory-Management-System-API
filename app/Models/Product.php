@@ -13,6 +13,7 @@ class Product extends Model
     use HasFactory, HasFormattedDate;
 
     protected $fillable = [
+        'supplier_id',
         'name',
         'sku',
         'status',

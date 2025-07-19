@@ -1,32 +1,25 @@
 <?php
 
 namespace App\Observers;
- 
-use Illuminate\Support\Facades\Cache;
- 
+
+use App\Support\SafeCache;
+
 class ProductObserver
 {
+
     /**
-     * Handle the User "created" event.
+     * Handle the User "created" or "updated" event.
      */
-    public function created(): void
+    public function saved(): void
     {
-        Cache::store('redis')->tags(['products'])->flush();
+        SafeCache::flushTag('products');
     }
- 
-    /**
-     * Handle the User "updated" event.
-     */
-    public function updated(): void
-    {
-        Cache::store('redis')->tags(['products'])->flush();
-    }
- 
+
     /**
      * Handle the User "deleted" event.
      */
     public function deleted(): void
     {
-        Cache::store('redis')->tags(['products'])->flush();
+        SafeCache::flushTag('products');
     }
 }
