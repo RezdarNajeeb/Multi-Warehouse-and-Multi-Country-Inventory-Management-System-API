@@ -29,14 +29,16 @@ class WarehouseRequest extends FormRequest
         $requiredOrSometimes = $this->routeIs('warehouses.store') ? 'required' : 'sometimes';
 
         return [
-            'name' => [
-                $requiredOrSometimes,
-                'string',
-                'max:50',
-                Rule::unique('warehouses')->where('country_id', $this->country_id)
-            ],
-            'location' => $requiredOrSometimes . '|string|max:65535',
+            'name' => "$requiredOrSometimes|string|max:50",
+            'location' => "$requiredOrSometimes|string|max:65535",
             'country_id' => "$requiredOrSometimes|integer|exists:countries,id",
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'country_id.exists' => 'The selected country does not exist.',
         ];
     }
 }
