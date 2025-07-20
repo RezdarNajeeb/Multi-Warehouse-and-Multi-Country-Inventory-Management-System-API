@@ -74,7 +74,7 @@ it('updates all inventory fields successfully when no stock or history exists', 
         ->warehouse_id->toBe($updateData['warehouse_id']) // Updated warehouse_id
         ->quantity->toBe(50)
         ->min_quantity->toBe(5)
-        ->and($message)->toBe('Updated successfully');
+        ->and($message)->toBe('Inventory updated successfully');
 });
 
 it('only updates quantity and min_quantity when stock exists', function () {
