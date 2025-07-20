@@ -314,6 +314,4 @@ For support and questions:
 
 ---
 
-<div style="text-align: center; font-weight: bold">
-    Built with ❤️ using Laravel Framework
-</div>
+<p align="center"><strong>Built with ❤️ using Laravel Framework</strong></p>
