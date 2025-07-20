@@ -5,12 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InventoryRequest;
 use App\Http\Resources\InventoryResource;
-use App\Http\Resources\GlobalStockResource;
 use App\Models\Inventory;
 use App\Services\InventoryService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
@@ -148,7 +146,7 @@ class InventoryController extends Controller
     {
         return $this->successResponse(
             new InventoryResource(
-                $inventory->load(request('relations', ['product','warehouse']))
+                $inventory->load(request('relations', ['product', 'warehouse']))
             ),
             'Inventory retrieved successfully'
         );
@@ -187,11 +185,12 @@ class InventoryController extends Controller
      */
     public function update(InventoryRequest $request, Inventory $inventory): JsonResponse
     {
+        [$updatedInventory, $message] = $this->inventoryService->update($request->validated(), $inventory);
         return $this->successResponse(
             new InventoryResource(
-                $this->inventoryService->update($request->validated(), $inventory)
+                $updatedInventory
             ),
-            'Inventory updated successfully'
+            $message
         );
     }
 

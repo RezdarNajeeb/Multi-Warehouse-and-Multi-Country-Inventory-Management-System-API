@@ -44,7 +44,7 @@ class InventoryService
 
     $message = $locked
       ? 'Only quantity and min_quantity were updated because stock or history exists.'
-      : 'Updated successfully';
+      : 'Inventory updated successfully';
 
     return [$updated, $message];
   }
