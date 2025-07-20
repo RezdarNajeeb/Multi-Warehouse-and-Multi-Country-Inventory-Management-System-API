@@ -31,7 +31,7 @@ class SupplierResource extends JsonResource
             'contact_info' => $this->contact_info,
             'address' => $this->address,
 
-            $this->mergeWhen(request()->routeIs('suppliers.show'), [
+            $this->mergeWhen(!request()->routeIs('suppliers.index'), [
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ]),

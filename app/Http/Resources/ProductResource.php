@@ -35,7 +35,7 @@ class ProductResource extends JsonResource
             'status' => $this->status,
             'price' => $this->price,
 
-            $this->mergeWhen(request()->routeIs('products.show'), [
+            $this->mergeWhen(!request()->routeIs('products.index'), [
                 'description' => $this->description,
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,

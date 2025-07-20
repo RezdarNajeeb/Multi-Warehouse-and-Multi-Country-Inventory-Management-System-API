@@ -36,7 +36,7 @@ class WarehouseResource extends JsonResource
             'name' => $this->name,
             'location' => $this->location,
 
-            $this->mergeWhen(request()->routeIs('countries.show'), [
+            $this->mergeWhen(!request()->routeIs('warehouses.index'), [
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ]),

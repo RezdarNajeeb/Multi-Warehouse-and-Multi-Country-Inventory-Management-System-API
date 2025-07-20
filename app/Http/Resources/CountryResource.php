@@ -29,7 +29,7 @@ class CountryResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
 
-            $this->mergeWhen(request()->routeIs('countries.show'), [
+            $this->mergeWhen(!request()->routeIs('countries.index'), [
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
             ]),

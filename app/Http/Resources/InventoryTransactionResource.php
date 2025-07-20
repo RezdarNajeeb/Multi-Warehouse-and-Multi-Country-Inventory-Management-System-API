@@ -42,7 +42,7 @@ class InventoryTransactionResource extends JsonResource
 
             'created_by' => $this->created_by,
 
-            $this->mergeWhen(request()->routeIs('inventory-transactions.show'), [
+            $this->mergeWhen(!request()->routeIs('inventory-transactions.index'), [
                 'created_at' => $this->created_at,
                 'updated_at' => $this->updated_at,
                 'notes' => $this->when($this->notes, fn() => $this->notes),
