@@ -1,6 +1,6 @@
 # Multi-Warehouse & Multi-Country Inventory Management System
 
-A comprehensive backend API system built with Laravel for managing products across multiple warehouses in different countries. The system provides robust inventory tracking, automated stock monitoring, and seamless inter-warehouse transfers.
+Is an API built with Laravel for managing products across multiple warehouses in different countries. The system provides robust inventory tracking, automated stock monitoring, and seamless inter-warehouse transfers.
 
 ## Features
 
@@ -8,12 +8,12 @@ A comprehensive backend API system built with Laravel for managing products acro
 - **Inventory Tracking**: Track stock levels with automatic updates on transactions
 - **Inter-Warehouse Transfers**: Seamlessly transfer products between warehouses across countries
 - **Automated Low Stock Alerts**: Daily scheduled reports for products reached minimum quantity
-- **Global Inventory View**: Comprehensive overview of stock levels across all warehouses
+- **Global Inventory View**: An overview of stock levels across all warehouses
 - **JWT Authentication**: Secure API access with token-based authentication
 - **Email & Slack Notifications**: Automated alerts for low stock situations
-- **Comprehensive API Documentation**: Auto-generated Swagger documentation
+- **Simple API Documentation**: Auto-generated Swagger documentation
 - **Caching System**: Optimized performance for frequently accessed products by using Redis
-- **Testing Suite**: Unit tests for major functionalities to ensure reliability
+- **Testing Suite**: Tests for major functionalities to ensure reliability
 
 ## Table of Contents
 
@@ -27,7 +27,7 @@ A comprehensive backend API system built with Laravel for managing products acro
 - [Scheduled Jobs](#scheduled-jobs)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
-- [Additional Resources](#additional-resources)
+- [Additional Resources](#resources)
 - [Contributing](#contributing)
 - [License](#license)
 - [Support](#support)
@@ -98,11 +98,11 @@ REDIS_PORT=6379
 
 # Mail Configuration
 MAIL_MAILER=smtp
+MAIL_SCHEME=null
 MAIL_HOST=smtp.gmail.com
 MAIL_PORT=587
 MAIL_USERNAME=your_email@gmail.com
 MAIL_PASSWORD=your_app_password
-MAIL_ENCRYPTION=tls
 MAIL_FROM_ADDRESS=your_email@gmail.com
 MAIL_FROM_NAME="${APP_NAME}"
 
@@ -113,11 +113,7 @@ LOW_STOCK_REPORT_EMAIL=admin@yourcompany.com
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
 
 # Cache
-CACHE_STORE=redis
 CACHE_PREFIX=your_cache_prefix
-QUEUE_CONNECTION=redis
-
-PRODUCT_CACHE_TTL=500 # Cache time in minutes
 
 # JWT Configuration
 JWT_SECRET=your_jwt_secret
@@ -150,6 +146,7 @@ This will create sample data including:
 - Warehouses in different countries
 - Sample products and suppliers
 - Initial inventory data
+- Some inventory transactions
 
 ## Development Server
 Run the following command to start the Laravel development server:
@@ -180,14 +177,21 @@ Content-Type: application/json
 Response:
 ```json
 {
-    "message": "User registered successfully."
+    "message": "Created successfully",
+    "data": {
+        "name": "Name Example",
+        "email": "name@example.com",
+        "updated_at": "TIMESTAMP",
+        "created_at": "TIMESTAMP",
+        "id": "USER_ID"
+    }
 }
 ```
 
 ### Login to Get Token
 
 ```bash
-POST /api/auth/login
+POST /api/login
 Accept: application/json
 Content-Type: application/json
 
@@ -200,9 +204,10 @@ Content-Type: application/json
 Response:
 ```json
 {
-    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
-    "token_type": "bearer",
-    "expires_in": 3600
+    "message": "Success",
+    "data": {
+        "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."
+    }
 }
 ```
 
@@ -253,7 +258,7 @@ php artisan test
 php artisan test --coverage
 
 # Run specific test class
-php artisan test --filter=ProductTest
+php artisan test --filter=ProductServiceTest
 ```
 
 ## Troubleshooting
@@ -281,7 +286,7 @@ php artisan test --filter=ProductTest
 4. **Redis Connection Issues:**
    Ensure Redis is running and configured correctly in your `.env` file.
 
-## Additional Resources
+## Resources
 
 - [Laravel Documentation](https://laravel.com/docs)
 - [JWT Auth Documentation](https://jwt-auth.readthedocs.io/)
@@ -309,4 +314,6 @@ For support and questions:
 
 ---
 
-**Built with ❤️ using Laravel Framework**
+<div style="text-align: center; font-weight: bold">
+    Built with ❤️ using Laravel Framework
+</div>
