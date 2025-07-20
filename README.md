@@ -27,7 +27,7 @@ Is an API built with Laravel for managing products across multiple warehouses in
 - [Scheduled Jobs](#scheduled-jobs)
 - [Testing](#testing)
 - [Troubleshooting](#troubleshooting)
-- [Additional Resources](#resources)
+- [Resources](#resources)
 - [Contributing](#contributing)
 - [License](#license)
 - [Support](#support)
