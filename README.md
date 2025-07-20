@@ -107,7 +107,7 @@ MAIL_FROM_ADDRESS=your_email@gmail.com
 MAIL_FROM_NAME="${APP_NAME}"
 
 # Low Stock Report Email
-LOW_STOCK_REPORT_EMAIL=admin@yourcompany.com
+LOW_STOCK_REPORT_EMAIL=your_email@gmail.com # To work with Gmail (in dev env)
 
 # Slack Webhook
 SLACK_WEBHOOK_URL=https://hooks.slack.com/services/YOUR/SLACK/WEBHOOK
