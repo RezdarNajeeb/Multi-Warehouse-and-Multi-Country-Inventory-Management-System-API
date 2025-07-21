@@ -238,6 +238,14 @@ Start queue workers for background jobs:
 php artisan queue:work
 ```
 
+### Running the Scheduler
+
+To ensure the scheduled jobs like the low stock report are triggered daily, you need to keep the Laravel scheduler running:
+
+```bash
+php artisan schedule:work
+```
+
 ## Testing
 
 ### Test Environment
